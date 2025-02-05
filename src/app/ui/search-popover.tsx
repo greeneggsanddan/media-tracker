@@ -78,7 +78,7 @@ export function SearchPopover({ queue, setQueue }) {
   // }
 
   const handleSelect = (item) => {
-    const newItem = { ...item, user_rating: null, order_index: null };
+    const newItem = { ...item, user_rating: null, rating_order: null };
     setQueue([...queue, newItem]);
     setOpen(false);
   }

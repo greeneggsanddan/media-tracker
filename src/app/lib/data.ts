@@ -15,7 +15,7 @@ export const example_shows = [
     name: 'Pokémon',
     vote_average: 7.898,
     vote_count: 1895,
-    user_rating: 2,
+    user_rating: 5,
     order_index: 0,
   },
   {
@@ -34,7 +34,7 @@ export const example_shows = [
     name: 'Recess',
     vote_average: 7.7,
     vote_count: 477,
-    user_rating: 2,
+    user_rating: 4,
     order_index: 1,
   },
   {
@@ -53,7 +53,7 @@ export const example_shows = [
     name: 'SpongeBob SquarePants',
     vote_average: 7.666,
     vote_count: 2979,
-    user_rating: 5,
+    user_rating: 4,
     order_index: 0,
   },
   {
@@ -72,7 +72,7 @@ export const example_shows = [
     name: 'Avatar: The Last Airbender',
     vote_average: 8.7,
     vote_count: 4212,
-    user_rating: 4,
+    user_rating: 3,
     order_index: 0,
   },
   {
@@ -91,7 +91,7 @@ export const example_shows = [
     name: 'The Fairly OddParents',
     vote_average: 7.6,
     vote_count: 986,
-    user_rating: 4,
+    user_rating: 3,
     order_index: 1,
   },
   {
@@ -129,7 +129,7 @@ export const example_shows = [
     name: 'Demon Slayer: Kimetsu no Yaiba',
     vote_average: 8.652,
     vote_count: 6549,
-    user_rating: 3,
+    user_rating: 1,
     order_index: 1,
   },
   {
@@ -148,7 +148,7 @@ export const example_shows = [
     name: 'Brooklyn Nine-Nine',
     vote_average: 8.215,
     vote_count: 3428,
-    user_rating: 3,
+    user_rating: 1,
     order_index: 2,
   },
 ];

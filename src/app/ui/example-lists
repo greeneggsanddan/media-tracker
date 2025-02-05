@@ -6,6 +6,7 @@ interface Item {
   user_rating: number;
   year?: number;
   genre?: string;
+  order: number;
 }
 
 interface RatingListsProps {
@@ -13,48 +14,111 @@ interface RatingListsProps {
   onUpdate?: (items: Item[]) => void;
 }
 
-export default function ExampleLists({ items: initialItems = [], onUpdate }) {
+const ratings = [5, 4, 3, 2, 1];
+
+const RatingLists: React.FC<RatingListsProps> = ({
+  items: initialItems = [],
+  onUpdate,
+}) => {
   const [items, setItems] = useState<Item[]>([]);
-  
+  const [draggedItem, setDraggedItem] = useState<Item | null>(null);
+  const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
+  const [dragOverRating, setDragOverRating] = useState<number | null>(null);
+
   useEffect(() => {
-    setItems(initialItems);
+    const itemsWithOrder = initialItems.map((item, index) => ({
+      ...item,
+      order: item.order ?? index,
+    }));
+    setItems(itemsWithOrder);
   }, [initialItems]);
 
-  const handleDragStart = (e: React.DragEvent, item: Item) => {
-    e.dataTransfer.setData('text/plain', JSON.stringify(item));
+  const handleDragStart = (item: Item) => {
+    setDraggedItem(item);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setDragOverItemId(null);
+    setDragOverRating(null);
   };
 
-  const handleDrop = (e: React.DragEvent, newRating: number) => {
+  const handleDragOver = (
+    e: React.DragEvent,
+    rating: number,
+    targetItem?: Item
+  ) => {
     e.preventDefault();
-    const draggedItem = JSON.parse(e.dataTransfer.getData('text/plain')) as Item;
-    
-    const updatedItems = items.map(item => 
-      item.id === draggedItem.id 
-        ? { ...item, user_rating: newRating }
-        : item
-    );
-    
+    if (targetItem) {
+      setDragOverItemId(targetItem.id);
+    }
+    setDragOverRating(rating);
+  };
+
+  const handleDrop = (rating: number, targetItem?: Item) => {
+    if (!draggedItem) return;
+
+    let updatedItems = [...items];
+
+    // Remove the dragged item from its current position
+    updatedItems = updatedItems.filter((item) => item.id !== draggedItem.id);
+
+    if (targetItem) {
+      // Insert at specific position
+      const targetIndex = updatedItems.findIndex(
+        (item) => item.id === targetItem.id
+      );
+      updatedItems.splice(targetIndex, 0, {
+        ...draggedItem,
+        user_rating: rating,
+      });
+    } else {
+      // Add to end of rating group
+      const ratingItems = updatedItems.filter(
+        (item) => item.user_rating === rating
+      );
+      const lastOrder =
+        ratingItems.length > 0
+          ? Math.max(...ratingItems.map((item) => item.order))
+          : -1;
+      updatedItems.push({
+        ...draggedItem,
+        user_rating: rating,
+        order: lastOrder + 1,
+      });
+    }
+
+    // Update order numbers
+    updatedItems = updatedItems.map((item, index) => ({
+      ...item,
+      order: index,
+    }));
+
     setItems(updatedItems);
     onUpdate?.(updatedItems);
+    handleDragEnd();
   };
 
+  // Group and sort items by rating
   const itemsByRating: Record<number, Item[]> = {};
   for (let i = 0; i <= 5; i++) {
-    itemsByRating[i] = items.filter(item => item.user_rating === i);
+    itemsByRating[i] = items
+      .filter((item) => item.user_rating === i)
+      .sort((a, b) => a.order - b.order);
   }
 
   return (
     <div className="space-y-8">
-      {[5, 4, 3, 2, 1, 0].map(rating => (
-        <div 
+      {ratings.map((rating) => (
+        <div
           key={rating}
-          className="p-4 bg-gray-50 rounded-lg"
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, rating)}
+          className={`p-4 rounded-lg ${
+            dragOverRating === rating && !dragOverItemId
+              ? 'bg-blue-50 border-2 border-blue-200'
+              : 'bg-gray-50'
+          }`}
+          onDragOver={(e) => handleDragOver(e, rating)}
+          onDrop={() => handleDrop(rating)}
         >
           <h2 className="mb-4 text-lg font-semibold flex items-center gap-2">
             <span>Rating: {rating}</span>
@@ -71,31 +135,54 @@ export default function ExampleLists({ items: initialItems = [], onUpdate }) {
               ))}
             </div>
           </h2>
-          
+
           <ul className="space-y-2">
-            {itemsByRating[rating]?.map(item => (
+            {itemsByRating[rating]?.map((item) => (
               <li
                 key={item.id}
                 draggable
-                onDragStart={(e) => handleDragStart(e, item)}
-                className="p-3 bg-white rounded shadow cursor-move hover:shadow-md transition-shadow flex justify-between items-center"
+                onDragStart={() => handleDragStart(item)}
+                onDragEnd={handleDragEnd}
+                onDragOver={(e) => handleDragOver(e, rating, item)}
+                onDrop={() => handleDrop(rating, item)}
+                className={`p-3 bg-white rounded shadow cursor-move
+                  ${draggedItem?.id === item.id ? 'opacity-50' : 'opacity-100'}
+                  ${
+                    dragOverItemId === item.id ? 'border-2 border-blue-300' : ''
+                  }
+                  hover:shadow-md transition-all`}
               >
-                <div>
-                  <span className="font-medium">{item.title}</span>
-                  {item.year && (
-                    <span className="text-sm text-gray-500 ml-2">({item.year})</span>
-                  )}
-                  {item.genre && (
-                    <span className="text-sm text-gray-500 ml-2">• {item.genre}</span>
-                  )}
-                </div>
-                <div className="text-sm text-gray-500">
-                  Drag to change rating
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="font-medium">{item.title}</span>
+                    {item.year && (
+                      <span className="text-sm text-gray-500 ml-2">
+                        ({item.year})
+                      </span>
+                    )}
+                    {item.genre && (
+                      <span className="text-sm text-gray-500 ml-2">
+                        • {item.genre}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-500">
+                      #{item.order + 1}
+                    </span>
+                  </div>
                 </div>
               </li>
             ))}
             {(!itemsByRating[rating] || itemsByRating[rating].length === 0) && (
-              <li className="p-3 border-2 border-dashed border-gray-200 rounded text-gray-400 text-center">
+              <li
+                className={`p-3 border-2 rounded text-gray-400 text-center
+                  ${
+                    dragOverRating === rating
+                      ? 'border-blue-300 bg-blue-50'
+                      : 'border-gray-200'
+                  }`}
+              >
                 Drop items here
               </li>
             )}
@@ -104,4 +191,6 @@ export default function ExampleLists({ items: initialItems = [], onUpdate }) {
       ))}
     </div>
   );
-}
+};
+
+export default RatingLists;

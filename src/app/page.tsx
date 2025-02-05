@@ -37,7 +37,7 @@ export default function Home() {
         </div>
         <h3>*Tier name*</h3>
         <hr className="border-zinc" />
-        {/* <TierGrid /> */}
+        <TierGrid />
       </div>
     </div>
   );
