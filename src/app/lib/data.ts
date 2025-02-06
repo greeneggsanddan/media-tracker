@@ -129,7 +129,7 @@ export const example_shows = [
     name: 'Demon Slayer: Kimetsu no Yaiba',
     vote_average: 8.652,
     vote_count: 6549,
-    user_rating: 1,
+    user_rating: 2,
     order_index: 1,
   },
   {
@@ -148,7 +148,7 @@ export const example_shows = [
     name: 'Brooklyn Nine-Nine',
     vote_average: 8.215,
     vote_count: 3428,
-    user_rating: 1,
+    user_rating: 2,
     order_index: 2,
   },
 ];

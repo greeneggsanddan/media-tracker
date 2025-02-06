@@ -9,6 +9,7 @@ export default function RatingLists({ items, setItems }) {
   const handleDragStart = (item, index) => {
     setDraggedItem(item);
     setDraggedItemIndex(index);
+    console.log('draggedItemIndex:', index)
   };
 
   const handleDragOver = (e, rating, targetItem?, index?) => {
@@ -19,6 +20,9 @@ export default function RatingLists({ items, setItems }) {
     const updatedItem = { ...draggedItem, user_rating: rating };
     let updatedItems = [...items];
     let updatedIndex;
+
+    // Remove the dragged item from its current position
+    updatedItems.splice(draggedItemIndex, 1);
 
     if (targetItem) {
       // Insert at specific position
@@ -41,8 +45,7 @@ export default function RatingLists({ items, setItems }) {
       }
     }
 
-    // Remove the dragged item from its current position and insert it into its new position
-    updatedItems.splice(draggedItemIndex, 1);
+    // Insert the dragged item into its new position
     updatedItems.splice(updatedIndex, 0, updatedItem);
 
     setDraggedItemIndex(updatedIndex);
