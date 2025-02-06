@@ -4,12 +4,12 @@ import { useState } from 'react';
 export default function RatingLists({ items, setItems }) {
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState(null);
-  const ratings = [5, 4, 3, 2, 1];
+  const ratings = [null, 5, 4, 3, 2, 1];
 
   const handleDragStart = (item, index) => {
     setDraggedItem(item);
     setDraggedItemIndex(index);
-    console.log('draggedItemIndex:', index)
+    console.log('draggedItemIndex:', index);
   };
 
   const handleDragOver = (e, rating, targetItem?, index?) => {
@@ -38,12 +38,20 @@ export default function RatingLists({ items, setItems }) {
         updatedIndex =
           updatedItems.findIndex((item) => item.id === lastItem.id) + 1;
       } else {
-        // Add to empty rating group (Change when adding a queue group)
-        updatedIndex = updatedItems.filter(
-          (item) => item.user_rating > rating
-        ).length;
+        if (rating) {
+          const itemsRatedHigher = updatedItems.filter(
+            (item) => item.user_rating > rating
+          ).length;
+          const itemsInQueue = updatedItems.filter(
+            (item) => item.user_rating === null
+          ).length;
+          updatedIndex = itemsRatedHigher + itemsInQueue;
+        } else {
+          updatedIndex = 0;
+        }
       }
     }
+    console.log('updatedIndex:', updatedIndex);
 
     // Insert the dragged item into its new position
     updatedItems.splice(updatedIndex, 0, updatedItem);
@@ -55,17 +63,18 @@ export default function RatingLists({ items, setItems }) {
   const handleDragEnd = () => {
     setDraggedItem(null);
     setDraggedItemIndex(null);
-  }
+    console.log(items);
+  };
 
   return (
     <div>
       {ratings.map((rating) => (
         <div
-          key={rating}
+          key={rating ? rating : 'queue'}
           // onDragOver={(e) => handleDragOver(e, rating)}
           // onDrop={}
         >
-          <h2>{rating} stars</h2>
+          <h2>{rating ? `${rating} stars` : 'Queue'}</h2>
           <div className="flex flex-wrap">
             {items.map(
               (item, index) =>

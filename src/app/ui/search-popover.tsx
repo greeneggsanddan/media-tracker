@@ -17,7 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export function SearchPopover({ queue, setQueue }) {
+export function SearchPopover({ items, setItems }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [data, setData] = useState([]);
@@ -46,9 +46,8 @@ export function SearchPopover({ queue, setQueue }) {
         options
       );
       const result = await response.json();
-      const items = result.results.slice(0, 5); // Returns the first five results
 
-      setData(items);
+      setData(result.results.slice(0, 5));
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
@@ -78,8 +77,12 @@ export function SearchPopover({ queue, setQueue }) {
   // }
 
   const handleSelect = (item) => {
-    const newItem = { ...item, user_rating: null, rating_order: null };
-    setQueue([...queue, newItem]);
+    const newItem = { ...item, user_rating: null };
+    const updatedItems = [...items];
+    const itemsInQueue = updatedItems.filter(i => i.user_rating === null).length;
+    updatedItems.splice(itemsInQueue, 0, newItem);
+
+    setItems(updatedItems);
     setOpen(false);
   }
 

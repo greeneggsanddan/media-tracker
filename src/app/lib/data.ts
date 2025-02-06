@@ -16,7 +16,6 @@ export const example_shows = [
     vote_average: 7.898,
     vote_count: 1895,
     user_rating: 5,
-    order_index: 0,
   },
   {
     adult: false,
@@ -35,7 +34,6 @@ export const example_shows = [
     vote_average: 7.7,
     vote_count: 477,
     user_rating: 4,
-    order_index: 1,
   },
   {
     adult: false,
@@ -54,7 +52,6 @@ export const example_shows = [
     vote_average: 7.666,
     vote_count: 2979,
     user_rating: 4,
-    order_index: 0,
   },
   {
     adult: false,
@@ -73,7 +70,6 @@ export const example_shows = [
     vote_average: 8.7,
     vote_count: 4212,
     user_rating: 3,
-    order_index: 0,
   },
   {
     adult: false,
@@ -92,7 +88,6 @@ export const example_shows = [
     vote_average: 7.6,
     vote_count: 986,
     user_rating: 3,
-    order_index: 1,
   },
   {
     adult: false,
@@ -111,7 +106,6 @@ export const example_shows = [
     vote_average: 8.029,
     vote_count: 910,
     user_rating: 3,
-    order_index: 0,
   },
   {
     adult: false,
@@ -130,7 +124,6 @@ export const example_shows = [
     vote_average: 8.652,
     vote_count: 6549,
     user_rating: 2,
-    order_index: 1,
   },
   {
     adult: false,
@@ -149,6 +142,5 @@ export const example_shows = [
     vote_average: 8.215,
     vote_count: 3428,
     user_rating: 2,
-    order_index: 2,
   },
 ];

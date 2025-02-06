@@ -28,8 +28,8 @@ export default function Home() {
 
   return (
     <div>
-      <div className="mx-auto max-w-4xl border border-zinc h-screen">
-        <SearchPopover queue={queue} setQueue={setQueue} />
+      <div className="mx-auto max-w-4xl border-x border-zinc min-h-screen">
+        <SearchPopover items={items} setItems={setItems} />
         {/* <OrderedList tierName="Queue" items={example_shows} /> */}
         <div className="container mx-auto p-8">
           <h1 className="text-2xl font-bold mb-8">Rate Your Movies</h1>
