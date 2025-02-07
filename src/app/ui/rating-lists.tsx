@@ -26,6 +26,7 @@ export default function RatingLists({ items, setItems }) {
 
   const handleDragOver = (e, rating, targetItem?, index?) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (draggedItemIndex === null || draggedItemIndex === index) return;
 
@@ -45,7 +46,6 @@ export default function RatingLists({ items, setItems }) {
       );
       if (ratedItems.length > 0) {
         // Add to end of exisitng rating group
-        // You need to add an invisible target (and then clean up statements)
         const lastItem = ratedItems[ratedItems.length - 1];
         updatedIndex =
           updatedItems.findIndex((item) => item.id === lastItem.id) + 1;
@@ -59,7 +59,7 @@ export default function RatingLists({ items, setItems }) {
         ).length;
         updatedIndex = itemsRatedHigher + itemsInQueue;
       } else {
-        // Add to an empty queue
+        // Add to an empty watchlist
         updatedIndex = 0;
       }
     }
@@ -82,7 +82,7 @@ export default function RatingLists({ items, setItems }) {
       {ratings.map((rating) => (
         <div
           key={rating ? rating : 'queue'}
-          // onDragOver={(e) => handleDragOver(e, rating)}
+          onDragOver={(e) => handleDragOver(e, rating)}
           // onDrop={}
         >
           <div className="flex">
@@ -94,7 +94,7 @@ export default function RatingLists({ items, setItems }) {
               : <WatchListHeader items={items} setItems={setItems} />}
           </div>
           <Separator className="my-2" />
-          <div className="flex flex-wrap gap-2 pb-6">
+          <div className="flex flex-wrap gap-2 pb-5">
             {items.map(
               (item, index) =>
                 item.user_rating === rating && (
@@ -119,17 +119,6 @@ export default function RatingLists({ items, setItems }) {
                   </div>
                 )
             )}
-            {/* {(!items ||
-              items.filter((item) => item.user_rating === rating).length ===
-                0) && (
-              <div
-                className="p-3 border-2 border-dashed border-gray-200 rounded text-gray-400 text-center"
-                onDragOver={(e) => handleDragOver(e, rating)}
-                // onDrop={}
-              >
-                Drop items here
-              </div>
-            )} */}
           </div>
         </div>
       ))}

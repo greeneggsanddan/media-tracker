@@ -1,11 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
-import { AddDialog } from './ui/add-dialog';
-import { SearchPopover } from './ui/search-popover';
 import RatingLists from './ui/rating-lists';
-
 import { example_shows } from './lib/data';
 
 export default function Home() {
