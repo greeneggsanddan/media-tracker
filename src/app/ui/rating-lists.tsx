@@ -4,6 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
 import { SearchPopover } from './search-popover';
 import { Item, ListProps } from '@/app/lib/types';
+import DragEvent
 
 function WatchListHeader({ items, setItems }: ListProps) {
   return (
