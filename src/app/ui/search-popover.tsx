@@ -16,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { PlusCircle, Plus } from "lucide-react";
 
 export function SearchPopover({ items, setItems }) {
   const [open, setOpen] = useState(false);
@@ -90,15 +91,14 @@ export function SearchPopover({ items, setItems }) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
         >
-          Add Show
+          <Plus color="white" strokeWidth={3}/>
+          <span>Add to watchlist</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="p-0" align="end">
         <Command>
           <CommandInput
             placeholder="Search for show..."

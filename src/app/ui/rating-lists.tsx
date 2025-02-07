@@ -1,5 +1,17 @@
 import Image from 'next/image';
 import { useState } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { Star } from 'lucide-react';
+import { SearchPopover } from './search-popover';
+
+function WatchListHeader({ items, setItems }) {
+  return (
+    <div className='flex justify-between items-end w-full'>
+      <h2 className='text-2xl font-semibold tracking-tight'>Watchlist</h2>
+      <SearchPopover items={items} setItems={setItems} />
+    </div>
+  )
+}
 
 export default function RatingLists({ items, setItems }) {
   const [draggedItem, setDraggedItem] = useState(null);
@@ -28,27 +40,27 @@ export default function RatingLists({ items, setItems }) {
       // Insert at specific position
       updatedIndex = index;
     } else {
-      // Add to end of rating group
       const ratedItems = updatedItems.filter(
         (item) => item.user_rating === rating
       );
       if (ratedItems.length > 0) {
-        // You need to add an invisible target
+        // Add to end of exisitng rating group
+        // You need to add an invisible target (and then clean up statements)
         const lastItem = ratedItems[ratedItems.length - 1];
         updatedIndex =
           updatedItems.findIndex((item) => item.id === lastItem.id) + 1;
+      } else if (rating) {
+        // Add to empty rating group
+        const itemsRatedHigher = updatedItems.filter(
+          (item) => item.user_rating > rating
+        ).length;
+        const itemsInQueue = updatedItems.filter(
+          (item) => item.user_rating === null
+        ).length;
+        updatedIndex = itemsRatedHigher + itemsInQueue;
       } else {
-        if (rating) {
-          const itemsRatedHigher = updatedItems.filter(
-            (item) => item.user_rating > rating
-          ).length;
-          const itemsInQueue = updatedItems.filter(
-            (item) => item.user_rating === null
-          ).length;
-          updatedIndex = itemsRatedHigher + itemsInQueue;
-        } else {
-          updatedIndex = 0;
-        }
+        // Add to an empty queue
+        updatedIndex = 0;
       }
     }
     console.log('updatedIndex:', updatedIndex);
@@ -63,7 +75,6 @@ export default function RatingLists({ items, setItems }) {
   const handleDragEnd = () => {
     setDraggedItem(null);
     setDraggedItemIndex(null);
-    console.log(items);
   };
 
   return (
@@ -74,14 +85,22 @@ export default function RatingLists({ items, setItems }) {
           // onDragOver={(e) => handleDragOver(e, rating)}
           // onDrop={}
         >
-          <h2>{rating ? `${rating} stars` : 'Queue'}</h2>
-          <div className="flex flex-wrap">
+          <div className="flex">
+            {rating
+              ? Array.from({ length: rating }, () => (
+                // eslint-disable-next-line react/jsx-key
+                <Star fill='black' strokeWidth={0} />
+                ))
+              : <WatchListHeader items={items} setItems={setItems} />}
+          </div>
+          <Separator className="my-2" />
+          <div className="flex flex-wrap gap-2 pb-6">
             {items.map(
               (item, index) =>
                 item.user_rating === rating && (
                   <div
                     key={item.id}
-                    className={`relative transition-transform ${
+                    className={`h-[180px] w-[120px] relative transition-transform drop-shadow ${
                       draggedItemIndex === index ? 'opacity-50 scale-105' : ''
                     }`}
                     draggable
@@ -93,14 +112,14 @@ export default function RatingLists({ items, setItems }) {
                     <Image
                       src={`https://image.tmdb.org/t/p/w154${item.poster_path}`}
                       alt="lorem ipsum"
-                      width={120}
-                      height={120}
+                      fill
+                      className="rounded-md object-cover"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
                   </div>
                 )
             )}
-            {(!items ||
+            {/* {(!items ||
               items.filter((item) => item.user_rating === rating).length ===
                 0) && (
               <div
@@ -110,7 +129,7 @@ export default function RatingLists({ items, setItems }) {
               >
                 Drop items here
               </div>
-            )}
+            )} */}
           </div>
         </div>
       ))}
