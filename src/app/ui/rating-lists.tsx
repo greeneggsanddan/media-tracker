@@ -25,7 +25,7 @@ export default function RatingLists({ items, setItems }: ListProps) {
     console.log('draggedItemIndex:', index);
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>, rating: number | null, targetItem?: Item, index?: number) => {
+  const handleDragOver = (e, rating: number | null, targetItem?: Item, index?: number) => {
     e.preventDefault();
     e.stopPropagation();
 
