@@ -4,6 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
 import { SearchPopover } from './search-popover';
 import { Item, ListProps } from '@/app/lib/types';
+import DragEvent
 
 function WatchListHeader({ items, setItems }: ListProps) {
   return (
@@ -25,7 +26,7 @@ export default function RatingLists({ items, setItems }: ListProps) {
     console.log('draggedItemIndex:', index);
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>, rating: number | null, targetItem?: Item, index?: number) => {
+  const handleDragOver = (e, rating: number | null, targetItem?: Item, index?: number) => {
     e.preventDefault();
     e.stopPropagation();
 
