@@ -1,7 +1,5 @@
 'use client';
-
 import { useEffect, useState } from "react"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -16,7 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { PlusCircle, Plus } from "lucide-react";
+import {  Plus } from "lucide-react";
 
 export function SearchPopover({ items, setItems }) {
   const [open, setOpen] = useState(false);

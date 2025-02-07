@@ -31,7 +31,7 @@ export default function RatingLists({ items, setItems }) {
     if (draggedItemIndex === null || draggedItemIndex === index) return;
 
     const updatedItem = { ...draggedItem, user_rating: rating };
-    let updatedItems = [...items];
+    const updatedItems = [...items];
     let updatedIndex;
 
     // Remove the dragged item from its current position
