@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import RatingLists from './ui/rating-lists';
 import { example_shows } from './lib/data';
+import { Item } from './lib/types';
 
 export default function Home() {
-  const [items, setItems] = useState(example_shows);
+  const [items, setItems] = useState<Item[]>(example_shows);
 
   // const handleUpdate = async (updatedItems) => {
   //   try {

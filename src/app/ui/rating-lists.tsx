@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
 import { SearchPopover } from './search-popover';
+import { Item, ListProps } from '@/app/lib/types';
 
-function WatchListHeader({ items, setItems }) {
+function WatchListHeader({ items, setItems }: ListProps) {
   return (
     <div className='flex justify-between items-end w-full'>
       <h2 className='text-2xl font-semibold tracking-tight'>Watchlist</h2>
@@ -13,18 +14,18 @@ function WatchListHeader({ items, setItems }) {
   )
 }
 
-export default function RatingLists({ items, setItems }) {
-  const [draggedItem, setDraggedItem] = useState(null);
-  const [draggedItemIndex, setDraggedItemIndex] = useState(null);
+export default function RatingLists({ items, setItems }: ListProps) {
+  const [draggedItem, setDraggedItem] = useState<Item | null>(null);
+  const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
   const ratings = [null, 5, 4, 3, 2, 1];
 
-  const handleDragStart = (item, index) => {
+  const handleDragStart = (item: Item, index: number) => {
     setDraggedItem(item);
     setDraggedItemIndex(index);
     console.log('draggedItemIndex:', index);
   };
 
-  const handleDragOver = (e, rating, targetItem?, index?) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, rating: number | null, targetItem?: Item, index?: number) => {
     e.preventDefault();
     e.stopPropagation();
 

@@ -15,11 +15,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {  Plus } from "lucide-react";
+import { Item, ListProps } from "@/app/lib/types";
 
-export function SearchPopover({ items, setItems }) {
+export function SearchPopover({ items, setItems }: ListProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Item[]>([]);
 
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {
@@ -75,7 +76,7 @@ export function SearchPopover({ items, setItems }) {
   //   setOpen(false);
   // }
 
-  const handleSelect = (item) => {
+  const handleSelect = (item: Item) => {
     const newItem = { ...item, user_rating: null };
     const updatedItems = [...items];
     const itemsInQueue = updatedItems.filter(i => i.user_rating === null).length;
@@ -107,7 +108,7 @@ export function SearchPopover({ items, setItems }) {
           <CommandList>
             <CommandEmpty>Show not found.</CommandEmpty>
             <CommandGroup>
-              {data.map((item) => (
+              {data.map((item: Item) => (
                 <CommandItem
                   key={item.id}
                   value={item.name}
