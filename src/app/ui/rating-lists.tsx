@@ -5,6 +5,7 @@ import { Star } from 'lucide-react';
 import { SearchPopover } from './search-popover';
 import { Rating, TvProps } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
+import { updateRating } from '../lib/actions';
 
 function WatchListHeader({ ratings, setRatings }: TvProps) {
   return (
@@ -106,6 +107,7 @@ export default function RatingLists() {
   };
 
   const handleDragEnd = () => {
+    updateRating(draggedItem, draggedItemIndex);
     setDraggedItem(null);
     setDraggedItemIndex(null);
   };
@@ -116,7 +118,6 @@ export default function RatingLists() {
         <div
           key={rating ? rating : 'queue'}
           onDragOver={(e) => handleDragOver(e, rating)}
-          // onDrop={}
         >
           <div className="flex">
             {rating ? (
@@ -141,7 +142,6 @@ export default function RatingLists() {
                     draggable
                     onDragStart={() => handleDragStart(item, index)}
                     onDragOver={(e) => handleDragOver(e, rating, item, index)}
-                    // onDrop={}
                     onDragEnd={handleDragEnd}
                   >
                     <Image
