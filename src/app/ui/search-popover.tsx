@@ -54,29 +54,6 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
     }
   }
 
-  // Do I need to find the details of the tv show?
-  // const handleSelect = async (id) => {
-  //   try {
-  //     const options = {
-  //       method: 'GET',
-  //       headers: {
-  //         accept: 'application/json',
-  //         Authorization:
-  //         `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
-  //       },
-  //     };
-  //     const response = await fetch(
-  //       `https://api.themoviedb.org/3/tv/${id}?language=en-US`,
-  //       options
-  //     )
-  //     const result = await response.json();
-  //     console.log(result);
-  //   } catch (error) {
-  //     console.error('Error getting details:', error);
-  //   }
-  //   setOpen(false);
-  // }
-
   function convertToRating(item: TvShow) {
     return {
       id: uuidv4(),

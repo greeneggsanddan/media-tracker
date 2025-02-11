@@ -1,10 +1,10 @@
-import { sql } from '@vercel/postgres';
-import { Rating } from './types';
+import { createClient } from '@/utils/supabase/client';
 
 export async function fetchRatings(id: string) {
   try {
-    const data = await sql<Rating>`SELECT * FROM ratings WHERE user_id = '${id}'`;
-    return data.rows
+    const supabase = await createClient();
+    const response = await supabase.from("ratings").select().eq('user_id', id);
+    return response.data;
   } catch (error) {
     console.error('Database Error:', error);
   }

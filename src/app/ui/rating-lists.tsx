@@ -28,7 +28,9 @@ export default function RatingLists() {
 
     async function loadData() {
       try {
-        const userRatings = await fetchRatings('1');
+        const userRatings = await fetchRatings(
+          '410544b2-4001-4271-9855-fec4b6a6442a'
+        );
         if (mounted) setRatings(userRatings);
       } catch (error) {
         console.error('Error loading ratings:', error);
@@ -118,9 +120,9 @@ export default function RatingLists() {
         >
           <div className="flex">
             {rating ? (
-              Array.from({ length: rating }, () => (
+              Array.from({ length: rating }, (_, index) => (
                 // eslint-disable-next-line react/jsx-key
-                <Star fill="black" strokeWidth={0} />
+                <Star key={index} fill="black" strokeWidth={0} />
               ))
             ) : (
               <WatchListHeader ratings={ratings} setRatings={setRatings} />
