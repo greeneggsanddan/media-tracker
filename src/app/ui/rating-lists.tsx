@@ -1,39 +1,68 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
 import { SearchPopover } from './search-popover';
-import { Item, ListProps } from '@/app/lib/types';
+import { Rating, TvProps } from '@/app/lib/types';
+import { fetchRatings } from '@/app/lib/data';
 
-function WatchListHeader({ items, setItems }: ListProps) {
+function WatchListHeader({ ratings, setRatings }: TvProps) {
   return (
-    <div className='flex justify-between items-end w-full'>
-      <h2 className='text-2xl font-semibold tracking-tight'>Watchlist</h2>
-      <SearchPopover items={items} setItems={setItems} />
+    <div className="flex justify-between items-end w-full">
+      <h2 className="text-2xl font-semibold tracking-tight">Watchlist</h2>
+      <SearchPopover ratings={ratings} setRatings={setRatings} />
     </div>
-  )
+  );
 }
 
-export default function RatingLists({ items, setItems }: ListProps) {
-  const [draggedItem, setDraggedItem] = useState<Item | null>(null);
+export default function RatingLists() {
+  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [draggedItem, setDraggedItem] = useState<Rating | null>(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
-  const ratings = [null, 5, 4, 3, 2, 1];
+  const [isLoading, setIsLoading] = useState(true);
+  const ratingValues = [null, 5, 4, 3, 2, 1];
 
-  const handleDragStart = (item: Item, index: number) => {
+  // Load data from the database
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadData() {
+      try {
+        const userRatings = await fetchRatings('1');
+        if (mounted) setRatings(userRatings);
+      } catch (error) {
+        console.error('Error loading ratings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadData();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleDragStart = (item: Rating, index: number) => {
     setDraggedItem(item);
     setDraggedItemIndex(index);
     console.log('draggedItemIndex:', index);
   };
 
-  const handleDragOver = (e, rating: number | null, targetItem?: Item, index?: number) => {
+  const handleDragOver = (
+    e: React.DragEvent<HTMLDivElement>,
+    rating: number | null,
+    targetItem?: Rating,
+    index?: number
+  ) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (draggedItemIndex === null || draggedItemIndex === index) return;
 
     const updatedItem = { ...draggedItem, user_rating: rating };
-    const updatedItems = [...items];
-    let updatedIndex;
+    const updatedItems = [...ratings];
+    let updatedIndex: number;
 
     // Remove the dragged item from its current position
     updatedItems.splice(draggedItemIndex, 1);
@@ -49,7 +78,8 @@ export default function RatingLists({ items, setItems }: ListProps) {
         // Add to end of exisitng rating group
         const lastItem = ratedItems[ratedItems.length - 1];
         updatedIndex =
-          updatedItems.findIndex((item) => item.id === lastItem.id) + 1;
+          updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
+          1;
       } else if (rating) {
         // Add to empty rating group
         const itemsRatedHigher = updatedItems.filter(
@@ -70,7 +100,7 @@ export default function RatingLists({ items, setItems }: ListProps) {
     updatedItems.splice(updatedIndex, 0, updatedItem);
 
     setDraggedItemIndex(updatedIndex);
-    setItems(updatedItems);
+    setRatings(updatedItems);
   };
 
   const handleDragEnd = () => {
@@ -80,27 +110,29 @@ export default function RatingLists({ items, setItems }: ListProps) {
 
   return (
     <div>
-      {ratings.map((rating) => (
+      {ratingValues.map((rating) => (
         <div
           key={rating ? rating : 'queue'}
           onDragOver={(e) => handleDragOver(e, rating)}
           // onDrop={}
         >
           <div className="flex">
-            {rating
-              ? Array.from({ length: rating }, () => (
+            {rating ? (
+              Array.from({ length: rating }, () => (
                 // eslint-disable-next-line react/jsx-key
-                <Star fill='black' strokeWidth={0} />
-                ))
-              : <WatchListHeader items={items} setItems={setItems} />}
+                <Star fill="black" strokeWidth={0} />
+              ))
+            ) : (
+              <WatchListHeader ratings={ratings} setRatings={setRatings} />
+            )}
           </div>
           <Separator className="my-2" />
           <div className="flex flex-wrap gap-2 pb-5">
-            {items.map(
+            {ratings.map(
               (item, index) =>
                 item.user_rating === rating && (
                   <div
-                    key={item.id}
+                    key={item.item_id}
                     className={`h-[180px] w-[120px] relative transition-transform drop-shadow ${
                       draggedItemIndex === index ? 'opacity-50 scale-105' : ''
                     }`}

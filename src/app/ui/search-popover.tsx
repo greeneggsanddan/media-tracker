@@ -15,12 +15,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {  Plus } from "lucide-react";
-import { Item, ListProps } from "@/app/lib/types";
+import { TvProps, TvShow } from "@/app/lib/types";
+import { v4 as uuidv4 } from 'uuid';
 
-export function SearchPopover({ items, setItems }: ListProps) {
+export function SearchPopover({ ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
-  const [data, setData] = useState<Item[]>([]);
+  const [data, setData] = useState<TvShow[]>([]);
 
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {
@@ -76,13 +77,26 @@ export function SearchPopover({ items, setItems }: ListProps) {
   //   setOpen(false);
   // }
 
-  const handleSelect = (item: Item) => {
-    const newItem = { ...item, user_rating: null };
-    const updatedItems = [...items];
-    const itemsInQueue = updatedItems.filter(i => i.user_rating === null).length;
-    updatedItems.splice(itemsInQueue, 0, newItem);
+  function convertToRating(item: TvShow) {
+    return {
+      id: uuidv4(),
+      user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
+      item_id: item.id,
+      item_type: 'tv',
+      user_rating: null,
+      position: null,
+      title: item.name,
+      poster_path: item.poster_path,
+    };
+  }
 
-    setItems(updatedItems);
+  const handleSelect = (item: TvShow) => {
+    const newRating = convertToRating(item);
+    const updatedRatings = [...ratings];
+    const itemsInWatchlist = updatedRatings.filter(i => i.user_rating === null).length;
+    updatedRatings.splice(itemsInWatchlist, 0, newRating);
+
+    setRatings(updatedRatings);
     setOpen(false);
   }
 
@@ -108,7 +122,7 @@ export function SearchPopover({ items, setItems }: ListProps) {
           <CommandList>
             <CommandEmpty>Show not found.</CommandEmpty>
             <CommandGroup>
-              {data.map((item: Item) => (
+              {data.map((item: TvShow) => (
                 <CommandItem
                   key={item.id}
                   value={item.name}
