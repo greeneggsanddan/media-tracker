@@ -17,6 +17,7 @@ import {
 import {  Plus } from "lucide-react";
 import { TvProps, TvShow } from "@/app/lib/types";
 import { v4 as uuidv4 } from 'uuid';
+import { createRating } from "../lib/actions";
 
 export function SearchPopover({ ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
@@ -54,25 +55,26 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
     }
   }
 
-  function convertToRating(item: TvShow) {
+  function convertToRating(item: TvShow, position: number) {
     return {
       id: uuidv4(),
       user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
       item_id: item.id,
       item_type: 'tv',
       user_rating: null,
-      position: null,
+      position,
       title: item.name,
       poster_path: item.poster_path,
     };
   }
 
   const handleSelect = (item: TvShow) => {
-    const newRating = convertToRating(item);
     const updatedRatings = [...ratings];
     const itemsInWatchlist = updatedRatings.filter(i => i.user_rating === null).length;
+    const newRating = convertToRating(item, itemsInWatchlist);
     updatedRatings.splice(itemsInWatchlist, 0, newRating);
 
+    createRating(newRating);
     setRatings(updatedRatings);
     setOpen(false);
   }
