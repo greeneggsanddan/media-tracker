@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
@@ -5,7 +7,7 @@ import { Star } from 'lucide-react';
 import { SearchPopover } from './search-popover';
 import { Rating, TvProps } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
-import { updateRating } from '../lib/actions';
+import { updateRatings } from '../lib/actions';
 
 function WatchListHeader({ ratings, setRatings }: TvProps) {
   return (
@@ -20,6 +22,8 @@ export default function RatingLists() {
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [draggedItem, setDraggedItem] = useState<Rating | null>(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
+  const [initialRating, setInitialRating] = useState<number | null>(null);
+  const [draggedItemRating, setDraggedItemRating] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const ratingValues = [null, 5, 4, 3, 2, 1];
 
@@ -32,7 +36,7 @@ export default function RatingLists() {
         const userRatings = await fetchRatings(
           '410544b2-4001-4271-9855-fec4b6a6442a'
         );
-        if (mounted) setRatings(userRatings);
+        if (mounted) setRatings(sortRatings(userRatings));
       } catch (error) {
         console.error('Error loading ratings:', error);
       } finally {
@@ -49,6 +53,9 @@ export default function RatingLists() {
   const handleDragStart = (item: Rating, index: number) => {
     setDraggedItem(item);
     setDraggedItemIndex(index);
+    setInitialRating(item.user_rating);
+    setDraggedItemRating(item.user_rating);
+    console.log('draggedItem:', item);
     console.log('draggedItemIndex:', index);
   };
 
@@ -63,13 +70,12 @@ export default function RatingLists() {
 
     if (draggedItemIndex === null || draggedItemIndex === index) return;
 
-    const updatedItem = { ...draggedItem, user_rating: rating };
     const updatedItems = [...ratings];
     let updatedIndex: number;
-
+    
     // Remove the dragged item from its current position
     updatedItems.splice(draggedItemIndex, 1);
-
+    
     if (targetItem) {
       // Insert at specific position
       updatedIndex = index;
@@ -81,8 +87,8 @@ export default function RatingLists() {
         // Add to end of exisitng rating group
         const lastItem = ratedItems[ratedItems.length - 1];
         updatedIndex =
-          updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
-          1;
+        updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
+        1;
       } else if (rating) {
         // Add to empty rating group
         const itemsRatedHigher = updatedItems.filter(
@@ -98,31 +104,66 @@ export default function RatingLists() {
       }
     }
     console.log('updatedIndex:', updatedIndex);
-
-    // Insert the dragged item into its new position
+    
+    // Update the dragged item and insert it into its new position
+    const updatedItem = { ...draggedItem, user_rating: rating };
     updatedItems.splice(updatedIndex, 0, updatedItem);
 
+    setDraggedItem(updatedItem);
     setDraggedItemIndex(updatedIndex);
+    setDraggedItemRating(rating);
     setRatings(updatedItems);
   };
 
-  const handleDragEnd = () => {
-    updateRating(draggedItem, draggedItemIndex);
-    setDraggedItem(null);
-    setDraggedItemIndex(null);
+  async function updatePositions() {
+    const initialRatings = ratings.filter((item) => item.user_rating === initialRating);
+    const updatedInitialRatings = initialRatings.map((item, index) => ({...item, position: index}));
+    const finalRatings = ratings.filter((item) => item.user_rating === draggedItemRating);
+    const updatedFinalRatings = finalRatings.map((item, index) => ({...item, position: index}));
+    if (initialRating !== draggedItemRating) {
+      await updateRatings(updatedInitialRatings);
+    }
+    await updateRatings(updatedFinalRatings);
+  }
+
+  const handleDrop = async () => {
+    try {
+      setDraggedItem(null);
+      setDraggedItemIndex(null);
+      setInitialRating(null);
+      setDraggedItemRating(null);
+      await updatePositions();
+    } catch (error) {
+      console.error('Error updating rating:', error);
+    }
   };
 
+  function sortRatings(array: Rating[]) {
+    return array.sort((a, b) => {
+      if (a.user_rating === null && b.user_rating === null) {
+        return a.position - b.position;
+      }
+      if (a.user_rating === null) return -1;
+      if (b.user_rating === null) return 1;
+
+      if (a.user_rating !== b.user_rating) {
+        return b.user_rating - a.user_rating;
+      }
+
+      return a.position - b.position;
+    });
+  }
+
   return (
-    <div>
+    <div onDrop={handleDrop}>
       {ratingValues.map((rating) => (
         <div
-          key={rating ? rating : 'queue'}
+          key={rating ? rating : 'watchlist'}
           onDragOver={(e) => handleDragOver(e, rating)}
         >
           <div className="flex">
             {rating ? (
               Array.from({ length: rating }, (_, index) => (
-                // eslint-disable-next-line react/jsx-key
                 <Star key={index} fill="black" strokeWidth={0} />
               ))
             ) : (
@@ -142,7 +183,6 @@ export default function RatingLists() {
                     draggable
                     onDragStart={() => handleDragStart(item, index)}
                     onDragOver={(e) => handleDragOver(e, rating, item, index)}
-                    onDragEnd={handleDragEnd}
                   >
                     <Image
                       src={`https://image.tmdb.org/t/p/w154${item.poster_path}`}

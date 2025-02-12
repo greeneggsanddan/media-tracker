@@ -13,12 +13,13 @@ export async function createRating(rating: Partial<Rating>) {
   }
 }
 
-export async function updateRating(rating: Rating, position: number) {
+export async function updateRatings(ratings: Rating[]) {
   try {
     const supabase = await createClient();
-    await supabase.from('ratings').update({ position }).eq('id', rating.id);
+    await Promise.all(ratings.map(async (rating) => {
+      await supabase.from('ratings').update({ user_rating: rating.user_rating, position: rating.position }).eq('id', rating.id);
+    }))
   } catch (error) {
     console.error('Database Error:', error);
   }
-
 }
