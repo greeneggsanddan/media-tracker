@@ -8,6 +8,7 @@ import { SearchPopover } from './search-popover';
 import { Rating, TvProps } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
 import { updateRatings } from '../lib/actions';
+import RatingItem from './rating-item';
 
 function WatchListHeader({ ratings, setRatings }: TvProps) {
   return (
@@ -23,7 +24,9 @@ export default function RatingLists() {
   const [draggedItem, setDraggedItem] = useState<Rating | null>(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
   const [initialRating, setInitialRating] = useState<number | null>(null);
-  const [draggedItemRating, setDraggedItemRating] = useState<number | null>(null);
+  const [draggedItemRating, setDraggedItemRating] = useState<number | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const ratingValues = [null, 5, 4, 3, 2, 1];
 
@@ -50,15 +53,6 @@ export default function RatingLists() {
     };
   }, []);
 
-  const handleDragStart = (item: Rating, index: number) => {
-    setDraggedItem(item);
-    setDraggedItemIndex(index);
-    setInitialRating(item.user_rating);
-    setDraggedItemRating(item.user_rating);
-    console.log('draggedItem:', item);
-    console.log('draggedItemIndex:', index);
-  };
-
   const handleDragOver = (
     e: React.DragEvent<HTMLDivElement>,
     rating: number | null,
@@ -72,10 +66,10 @@ export default function RatingLists() {
 
     const updatedItems = [...ratings];
     let updatedIndex: number;
-    
+
     // Remove the dragged item from its current position
     updatedItems.splice(draggedItemIndex, 1);
-    
+
     if (targetItem) {
       // Insert at specific position
       updatedIndex = index;
@@ -87,8 +81,8 @@ export default function RatingLists() {
         // Add to end of exisitng rating group
         const lastItem = ratedItems[ratedItems.length - 1];
         updatedIndex =
-        updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
-        1;
+          updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
+          1;
       } else if (rating) {
         // Add to empty rating group
         const itemsRatedHigher = updatedItems.filter(
@@ -104,7 +98,7 @@ export default function RatingLists() {
       }
     }
     console.log('updatedIndex:', updatedIndex);
-    
+
     // Update the dragged item and insert it into its new position
     const updatedItem = { ...draggedItem, user_rating: rating };
     updatedItems.splice(updatedIndex, 0, updatedItem);
@@ -116,10 +110,20 @@ export default function RatingLists() {
   };
 
   async function updatePositions() {
-    const initialRatings = ratings.filter((item) => item.user_rating === initialRating);
-    const updatedInitialRatings = initialRatings.map((item, index) => ({...item, position: index}));
-    const finalRatings = ratings.filter((item) => item.user_rating === draggedItemRating);
-    const updatedFinalRatings = finalRatings.map((item, index) => ({...item, position: index}));
+    const initialRatings = ratings.filter(
+      (item) => item.user_rating === initialRating
+    );
+    const updatedInitialRatings = initialRatings.map((item, index) => ({
+      ...item,
+      position: index,
+    }));
+    const finalRatings = ratings.filter(
+      (item) => item.user_rating === draggedItemRating
+    );
+    const updatedFinalRatings = finalRatings.map((item, index) => ({
+      ...item,
+      position: index,
+    }));
     if (initialRating !== draggedItemRating) {
       await updateRatings(updatedInitialRatings);
     }
@@ -175,23 +179,17 @@ export default function RatingLists() {
             {ratings.map(
               (item, index) =>
                 item.user_rating === rating && (
-                  <div
-                    key={item.item_id}
-                    className={`h-[180px] w-[120px] relative transition-transform drop-shadow ${
-                      draggedItemIndex === index ? 'opacity-50 scale-105' : ''
-                    }`}
-                    draggable
-                    onDragStart={() => handleDragStart(item, index)}
-                    onDragOver={(e) => handleDragOver(e, rating, item, index)}
-                  >
-                    <Image
-                      src={`https://image.tmdb.org/t/p/w154${item.poster_path}`}
-                      alt="lorem ipsum"
-                      fill
-                      className="rounded-md object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
-                  </div>
+                  <RatingItem
+                    item={item}
+                    index={index}
+                    rating={rating}
+                    draggedItemIndex={draggedItemIndex}
+                    handleDragOver={handleDragOver}
+                    setDraggedItem={setDraggedItem}
+                    setDraggedItemIndex={setDraggedItemIndex}
+                    setInitialRating={setInitialRating}
+                    setDraggedItemRating={setDraggedItemRating}
+                  />
                 )
             )}
           </div>
