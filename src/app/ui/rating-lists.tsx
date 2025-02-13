@@ -1,5 +1,4 @@
 'use client';
-
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
@@ -160,14 +159,14 @@ export default function RatingLists() {
 
   return (
     <div onDrop={handleDrop}>
-      {ratingValues.map((rating) => (
+      {ratingValues.map((ratingValue) => (
         <div
-          key={rating ? rating : 'watchlist'}
-          onDragOver={(e) => handleDragOver(e, rating)}
+          key={ratingValue ? ratingValue : 'watchlist'}
+          onDragOver={(e) => handleDragOver(e, ratingValue)}
         >
           <div className="flex">
-            {rating ? (
-              Array.from({ length: rating }, (_, index) => (
+            {ratingValue ? (
+              Array.from({ length: ratingValue }, (_, index) => (
                 <Star key={index} fill="black" strokeWidth={0} />
               ))
             ) : (
@@ -178,17 +177,19 @@ export default function RatingLists() {
           <div className="flex flex-wrap gap-2 pb-5">
             {ratings.map(
               (item, index) =>
-                item.user_rating === rating && (
+                item.user_rating === ratingValue && (
                   <RatingItem
                     item={item}
                     index={index}
-                    rating={rating}
+                    ratingValue={ratingValue}
                     draggedItemIndex={draggedItemIndex}
                     handleDragOver={handleDragOver}
                     setDraggedItem={setDraggedItem}
                     setDraggedItemIndex={setDraggedItemIndex}
                     setInitialRating={setInitialRating}
                     setDraggedItemRating={setDraggedItemRating}
+                    ratings={ratings}
+                    setRatings={setRatings}
                   />
                 )
             )}

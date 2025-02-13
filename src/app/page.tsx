@@ -1,5 +1,4 @@
 'use client'; // Do I need this?
-
 import RatingLists from './ui/rating-lists';
 
 export default function Home() {
