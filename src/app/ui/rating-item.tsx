@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { Rating } from '../lib/types';
 import { updateRatings, deleteRating } from '../lib/actions';
+import { useState } from 'react';
 
 export default function RatingItem({
   item,
@@ -27,6 +28,8 @@ export default function RatingItem({
   ratings,
   setRatings
 }) {
+  const [open, setOpen] = useState<boolean>(false);
+
   const handleDragStart = (item: Rating, index: number) => {
     setDraggedItem(item);
     setDraggedItemIndex(index);
@@ -43,10 +46,12 @@ export default function RatingItem({
       const updatedRatings = [...ratings];
       updatedRatings.splice(index, 1);
       setRatings(updatedRatings);
-      
+
       const sameRatings = updatedRatings.filter((rating) => rating.user_rating === ratingValue);
       const updatedPositions = sameRatings.map((item, index) => ({...item, position: index}));
       await updateRatings(updatedPositions);
+
+      setOpen(false);
       console.log('Item deleted', item);
     } catch (error) {
       console.error('Error deleting item:', error);
@@ -54,7 +59,7 @@ export default function RatingItem({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <div
           key={item.item_id}
