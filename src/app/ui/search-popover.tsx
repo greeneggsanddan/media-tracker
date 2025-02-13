@@ -61,11 +61,17 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
         (i) => i.user_rating === null
       ).length;
       const newRating = convertToRating(item, itemsInWatchlist);
-      const savedRating = await createRating(newRating);
-      updatedRatings.splice(itemsInWatchlist, 0, savedRating);
-  
+      updatedRatings.splice(itemsInWatchlist, 0, newRating);
+
+      // Displays the rating immediately in the UI
       setRatings(updatedRatings);
       setOpen(false);
+
+      // Updates the array with a rating that has an ID from the database
+      const ratingWithId = await createRating(newRating);
+      const finalRatings = [...updatedRatings];
+      finalRatings.splice(itemsInWatchlist, 1, ratingWithId);
+      setRatings(updatedRatings);
     } catch (error) {
       console.error('Error creating rating:', error);
     }

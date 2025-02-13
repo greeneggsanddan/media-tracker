@@ -34,7 +34,7 @@ export interface TvShow extends Item {
 }
 
 export interface Rating {
-  id: string;
+  id?: string;
   user_id: string;
   item_id: number;
   item_type: string;
