@@ -41,17 +41,15 @@ export default function RatingItem({
 
   const handleDelete = async (item: Rating, index: number) => {
     try {
-      await deleteRating(item.id);
-
       const updatedRatings = [...ratings];
       updatedRatings.splice(index, 1);
       setRatings(updatedRatings);
+      setOpen(false);
+      await deleteRating(item.id);
 
       const sameRatings = updatedRatings.filter((rating) => rating.user_rating === ratingValue);
       const updatedPositions = sameRatings.map((item, index) => ({...item, position: index}));
       await updateRatings(updatedPositions);
-
-      setOpen(false);
       console.log('Item deleted', item);
     } catch (error) {
       console.error('Error deleting item:', error);

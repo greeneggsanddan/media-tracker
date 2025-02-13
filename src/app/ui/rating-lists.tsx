@@ -137,12 +137,11 @@ export default function RatingLists() {
 
   const handleDrop = async () => {
     try {
-      await updatePositions();
-
       setDraggedItem(null);
       setDraggedItemIndex(null);
       setInitialRating(null);
       setDraggedItemRating(null);
+      await updatePositions();
     } catch (error) {
       console.error('Error updating rating:', error);
     }

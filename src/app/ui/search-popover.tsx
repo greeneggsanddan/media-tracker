@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -8,15 +8,16 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import {  Plus } from "lucide-react";
-import { Rating, TvShow, TvProps } from "@/app/lib/types";
-import { createRating } from "../lib/actions";
+} from '@/components/ui/popover';
+import { Plus } from 'lucide-react';
+import { Rating, TvShow, TvProps } from '@/app/lib/types';
+import { createRating } from '../lib/actions';
+import { fetchResults } from '../lib/actions';
 
 export function SearchPopover({ ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
@@ -34,25 +35,12 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
 
   const handleSearch = async (query: string) => {
     try {
-      const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization:
-          `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
-        },
-      };
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=false&language=en-US&page=1`,
-        options
-      );
-      const result = await response.json();
-
-      setData(result.results.slice(0, 5));
+      const response = await fetchResults(query);
+      setData(response);
     } catch (error) {
-      console.error('Error fetching search results:', error);
+      console.error('Search Error:', error);
     }
-  }
+  };
 
   function convertToRating(item: TvShow, position: number) {
     return {
@@ -67,24 +55,27 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
   }
 
   const handleSelect = async (item: TvShow) => {
-    const updatedRatings = [...ratings];
-    const itemsInWatchlist = updatedRatings.filter(i => i.user_rating === null).length;
-    const newRating = convertToRating(item, itemsInWatchlist);
-    const savedRating = await createRating(newRating);
-    updatedRatings.splice(itemsInWatchlist, 0, savedRating);
-
-    setRatings(updatedRatings);
-    setOpen(false);
-  }
+    try {
+      const updatedRatings = [...ratings];
+      const itemsInWatchlist = updatedRatings.filter(
+        (i) => i.user_rating === null
+      ).length;
+      const newRating = convertToRating(item, itemsInWatchlist);
+      const savedRating = await createRating(newRating);
+      updatedRatings.splice(itemsInWatchlist, 0, savedRating);
+  
+      setRatings(updatedRatings);
+      setOpen(false);
+    } catch (error) {
+      console.error('Error creating rating:', error);
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          role="combobox"
-          aria-expanded={open}
-        >
-          <Plus color="white" strokeWidth={3}/>
+        <Button role="combobox" aria-expanded={open}>
+          <Plus color="white" strokeWidth={3} />
           <span>Add to watchlist</span>
         </Button>
       </PopoverTrigger>
@@ -108,18 +99,6 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
                   {item.name}
                 </CommandItem>
               ))}
-              {/* {frameworks.map((framework) => (
-                <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  {framework.label}
-                </CommandItem>
-              ))} */}
             </CommandGroup>
           </CommandList>
         </Command>
