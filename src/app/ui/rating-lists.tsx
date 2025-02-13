@@ -109,33 +109,40 @@ export default function RatingLists() {
   };
 
   async function updatePositions() {
-    const initialRatings = ratings.filter(
-      (item) => item.user_rating === initialRating
-    );
-    const updatedInitialRatings = initialRatings.map((item, index) => ({
-      ...item,
-      position: index,
-    }));
-    const finalRatings = ratings.filter(
-      (item) => item.user_rating === draggedItemRating
-    );
-    const updatedFinalRatings = finalRatings.map((item, index) => ({
-      ...item,
-      position: index,
-    }));
-    if (initialRating !== draggedItemRating) {
-      await updateRatings(updatedInitialRatings);
+    try {
+      const initialRatings = ratings.filter(
+        (item) => item.user_rating === initialRating
+      );
+      const finalRatings = ratings.filter(
+        (item) => item.user_rating === draggedItemRating
+      );
+      const updatedInitialRatings = initialRatings.map((item, index) => ({
+        ...item,
+        position: index,
+      }));
+      const updatedFinalRatings = finalRatings.map((item, index) => ({
+        ...item,
+        position: index,
+      }));
+
+      if (initialRating !== draggedItemRating) {
+        await Promise.all([updateRatings(updatedInitialRatings), updateRatings(updatedFinalRatings)]);
+      } else {
+        await updateRatings(updatedFinalRatings);
+      }
+    } catch (error) {
+      console.error('Error updating positions:', error);
     }
-    await updateRatings(updatedFinalRatings);
   }
 
   const handleDrop = async () => {
     try {
+      await updatePositions();
+
       setDraggedItem(null);
       setDraggedItemIndex(null);
       setInitialRating(null);
       setDraggedItemRating(null);
-      await updatePositions();
     } catch (error) {
       console.error('Error updating rating:', error);
     }
