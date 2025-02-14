@@ -19,10 +19,10 @@ import { Rating, TvShow, TvProps } from '@/app/lib/types';
 import { createRating } from '../lib/actions';
 import { fetchResults } from '../lib/actions';
 
-export function SearchPopover({ ratings, setRatings }: TvProps) {
+export function SearchPopover({ user, ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
-  const [data, setData] = useState<TvShow[]>([]);
+  const [results, setResults] = useState<TvShow[]>([]);
 
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {
@@ -36,7 +36,7 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
   const handleSearch = async (query: string) => {
     try {
       const response = await fetchResults(query);
-      setData(response);
+      setResults(response);
     } catch (error) {
       console.error('Search Error:', error);
     }
@@ -44,7 +44,7 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
 
   function convertToRating(item: TvShow, position: number) {
     return {
-      user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
+      user_id: user.id,
       item_id: item.id,
       item_type: 'tv',
       user_rating: null,
@@ -56,10 +56,12 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
 
   const handleSelect = async (item: TvShow) => {
     try {
+      console.log(user);
       const updatedRatings = [...ratings];
       const itemsInWatchlist = updatedRatings.filter(
         (i) => i.user_rating === null
       ).length;
+      console.log(item);
       const newRating = convertToRating(item, itemsInWatchlist);
       updatedRatings.splice(itemsInWatchlist, 0, newRating);
 
@@ -96,7 +98,7 @@ export function SearchPopover({ ratings, setRatings }: TvProps) {
           <CommandList>
             <CommandEmpty>Show not found.</CommandEmpty>
             <CommandGroup>
-              {data.map((item: TvShow) => (
+              {results.map((item: TvShow) => (
                 <CommandItem
                   key={item.id}
                   value={item.name}

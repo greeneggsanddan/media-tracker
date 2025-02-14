@@ -1,8 +1,4 @@
-export interface User {
-  id?: string;
-  email: string;
-  password: string;
-}
+import { User } from "@supabase/supabase-js";
 
 export interface Item {
   adult: boolean;
@@ -46,6 +42,7 @@ export interface Rating {
 }
 
 export interface TvProps {
+  user: User;
   ratings: Rating[];
   setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
 }

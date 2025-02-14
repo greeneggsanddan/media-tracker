@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
@@ -8,17 +7,18 @@ import { Rating, TvProps } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
 import { updateRatings } from '../lib/actions';
 import RatingItem from './rating-item';
+import { User } from '@supabase/supabase-js';
 
-function WatchListHeader({ ratings, setRatings }: TvProps) {
+function WatchListHeader({ user, ratings, setRatings }: TvProps) {
   return (
     <div className="flex justify-between items-end w-full">
       <h2 className="text-2xl font-semibold tracking-tight">Watchlist</h2>
-      <SearchPopover ratings={ratings} setRatings={setRatings} />
+      <SearchPopover user={user} ratings={ratings} setRatings={setRatings} />
     </div>
   );
 }
 
-export default function RatingLists() {
+export default function RatingLists({ user }: { user: User }) {
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [draggedItem, setDraggedItem] = useState<Rating | null>(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
@@ -35,9 +35,7 @@ export default function RatingLists() {
 
     async function loadData() {
       try {
-        const userRatings = await fetchRatings(
-          '410544b2-4001-4271-9855-fec4b6a6442a'
-        );
+        const userRatings = await fetchRatings(user.id);
         if (mounted) setRatings(sortRatings(userRatings));
       } catch (error) {
         console.error('Error loading ratings:', error);
@@ -148,6 +146,8 @@ export default function RatingLists() {
   };
 
   function sortRatings(array: Rating[]) {
+    if (!array || array.length === 0) return [];
+    
     return array.sort((a, b) => {
       if (a.user_rating === null && b.user_rating === null) {
         return a.position - b.position;
@@ -176,7 +176,7 @@ export default function RatingLists() {
                 <Star key={index} fill="black" strokeWidth={0} />
               ))
             ) : (
-              <WatchListHeader ratings={ratings} setRatings={setRatings} />
+                <WatchListHeader user={user} ratings={ratings} setRatings={setRatings} />
             )}
           </div>
           <Separator className="my-2" />
