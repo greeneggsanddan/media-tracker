@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
-import { SearchPopover } from './search-popover';
+import SearchPopover from './search-popover';
 import { Rating, TvProps } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
 import { updateRatings } from '../lib/actions';

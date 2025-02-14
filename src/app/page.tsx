@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import RatingLists from './ui/rating-lists';
 import { createClient } from '@/utils/supabase/server';
+import LogOutButton from './ui/logout-button';
 
 export default async function Home() {
   const supabase = await createClient();
@@ -17,7 +18,12 @@ export default async function Home() {
     <div>
       <div className="mx-auto max-w-4xl border-x border-zinc min-h-screen">
         <div className="container mx-auto p-8">
-          <h1 className="text-3xl font-bold tracking-tight mb-4">Media Tracker</h1>
+          <div className="flex justify-between w-full">
+            <h1 className="text-3xl font-bold tracking-tight mb-4">
+              Media Tracker
+            </h1>
+            <LogOutButton user={user} />
+          </div>
           <RatingLists user={user} />
         </div>
       </div>

@@ -19,7 +19,7 @@ import { Rating, TvShow, TvProps } from '@/app/lib/types';
 import { createRating } from '../lib/actions';
 import { fetchResults } from '../lib/actions';
 
-export function SearchPopover({ user, ratings, setRatings }: TvProps) {
+export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [results, setResults] = useState<TvShow[]>([]);
