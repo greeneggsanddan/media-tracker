@@ -6,6 +6,7 @@ import { Rating } from '../lib/types';
 import LogOutButton from './logout-button';
 import SearchBar from './search-bar';
 import RatingLists from './rating-lists';
+import SearchPopover from './search-popover';
 
 export default function HomeUI({ user }: { user: User }) {
   const [ratings, setRatings] = useState<Rating[]>([]);
@@ -20,7 +21,8 @@ export default function HomeUI({ user }: { user: User }) {
             </h1>
               <LogOutButton user={user} />
           </div>
-          <SearchBar user={user} ratings={ratings} setRatings={setRatings} />
+          <SearchPopover user={user} ratings={ratings}  setRatings={setRatings} />
+          {/* <SearchBar user={user} ratings={ratings} setRatings={setRatings} /> */}
           <RatingLists user={user} ratings={ratings} setRatings={setRatings} />
         </div>
       </div>

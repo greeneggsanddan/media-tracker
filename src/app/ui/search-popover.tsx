@@ -14,16 +14,37 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Rating, TvShow, TvProps } from '@/app/lib/types';
-import { createRating, fetchResults } from '../lib/actions';
+import { createRating, fetchResults, fetchTrendingShows } from '../lib/actions';
 import { toast } from 'sonner';
+import { Item } from '@radix-ui/react-dropdown-menu';
 
 export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [results, setResults] = useState<TvShow[]>([]);
-  
+  const [trending, setTrending] = useState<TvShow[]>([]);
+
+  // Fetch trending tv shows
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadTrending() {
+      try {
+        const response = await fetchTrendingShows();
+        if (mounted) setTrending(response);
+      } catch (error) {
+        console.error('Error fetching trending shows:', error);
+      }
+    }
+
+    loadTrending();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -36,7 +57,6 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
   const handleSearch = async (query: string) => {
     try {
       const response = await fetchResults(query);
-      console.log(response);
       setResults(response);
     } catch (error) {
       console.error('Search Error:', error);
@@ -86,35 +106,58 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
     }
   };
 
+  const commandItems = results ? results : trending;
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button role="combobox" variant="outline" aria-expanded={open}>
-          <Search color="gray" strokeWidth={2} />
-          <span className='text-muted-foreground'>What have you been watching?</span>
+        <Button
+          role="combobox"
+          variant="outline"
+          className="p-2.5 w-full justify-start"
+          aria-expanded={open}
+        >
+          <Search className="opacity-50" strokeWidth={2} />
+          <span className="text-muted-foreground">
+            What have you been watching?
+          </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0" align="end">
-        <Command>
+      <PopoverContent className="p-0 w-[880px]">
+        <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Search for show..."
+            placeholder="Search for a show..."
             className="h-9"
             value={value}
             onValueChange={setValue}
           />
           <CommandList>
-            <CommandEmpty>Show not found.</CommandEmpty>
-            <CommandGroup>
-              {results.map((item: TvShow) => (
-                <CommandItem
-                  key={item.id}
-                  value={`${item.name} (${item.id})`}
-                  onSelect={() => handleSelect(item)}
-                >
-                  {item.name} ({item.first_air_date.slice(0, 4)})
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            <CommandEmpty>No results found.</CommandEmpty>
+            {results.length > 0 ? (
+              <CommandGroup heading="Search results">
+                {results.map((item: TvShow) => (
+                  <CommandItem
+                    key={item.id}
+                    value={`${item.name} (${item.id})`}
+                    onSelect={() => handleSelect(item)}
+                  >
+                    {item.name} ({item.first_air_date.slice(0, 4)})
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ) : (
+              <CommandGroup heading="Trending">
+                {trending.map((item: TvShow) => (
+                  <CommandItem
+                    key={item.id}
+                    value={`${item.name} (${item.id})`}
+                    onSelect={() => handleSelect(item)}
+                  >
+                    {item.name} ({item.first_air_date.slice(0, 4)})
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

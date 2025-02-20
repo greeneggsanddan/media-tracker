@@ -65,3 +65,24 @@ export async function fetchResults(query: string) {
     console.error('Error fetching search results:', error);
   }
 }
+
+export async function fetchTrendingShows() {
+  try {
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+      },
+    };
+    const response = await fetch(
+      'https://api.themoviedb.org/3/trending/tv/week?language=en-US',
+      options
+    );
+    const result = await response.json();
+
+    return result.results.slice(0, 5);
+  } catch (error) {
+    console.error('Error fetching popular shows:', error);
+  }
+}
