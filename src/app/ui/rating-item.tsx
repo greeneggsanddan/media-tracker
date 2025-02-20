@@ -60,8 +60,7 @@ export default function RatingItem({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <div
-          key={item.item_id}
-          className={`h-[180px] w-[120px] relative transition-transform drop-shadow ${
+          className={`h-[210px] w-[140px] relative transition-transform drop-shadow ${
             draggedItemIndex === index ? 'opacity-50 scale-105' : ''
           }`}
           draggable
@@ -69,7 +68,7 @@ export default function RatingItem({
           onDragOver={(e) => handleDragOver(e, ratingValue, item, index)}
         >
           <Image
-            src={`https://image.tmdb.org/t/p/w154${item.poster_path}`}
+            src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
             alt="lorem ipsum"
             fill
             className="rounded-md object-cover"

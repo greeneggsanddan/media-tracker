@@ -1,30 +1,30 @@
 import { User } from "@supabase/supabase-js";
 
 export interface Item {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: number[];
+  adult?: boolean;
+  backdrop_path?: string;
+  genre_ids?: number[];
   id: number;
-  original_language: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  vote_average: number;
-  vote_count: number;
+  original_language?: string;
+  overview?: string;
+  popularity?: number;
+  poster_path?: string;
+  vote_average?: number;
+  vote_count?: number;
 }
 
 export interface Movie extends Item {
   item_type: 'movie';
-  original_title: string;
+  original_title?: string;
   release_date: string;
   title: string;
-  video: boolean;
+  video?: boolean;
 }
 
 export interface TvShow extends Item {
   item_type: 'tv';
-  origin_country: string[],
-  original_name: string,
+  origin_country?: string[],
+  original_name?: string,
   first_air_date: string,
   name: string,
 }
@@ -38,7 +38,7 @@ export interface Rating {
   position: number | null;
   // Basic info
   title: string;
-  poster_path: string;
+  poster_path?: string;
 }
 
 export interface TvProps {

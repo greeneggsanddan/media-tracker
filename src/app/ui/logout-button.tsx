@@ -5,7 +5,7 @@ import { logout } from "../login/actions";
 export default function LogOutButton({ user }: { user: User }) {
   return (
     <Button variant="secondary" onClick={logout}>
-      Log out {user.email}
+      Log out
     </Button>
   );
 }

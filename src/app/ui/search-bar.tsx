@@ -1,6 +1,13 @@
-'use client';
+'use client'
+
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Search, Plus } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -9,21 +16,16 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Plus, Search } from 'lucide-react';
-import { Rating, TvShow, TvProps } from '@/app/lib/types';
+import { TvShow, TvProps } from '../lib/types';
 import { createRating, fetchResults } from '../lib/actions';
 import { toast } from 'sonner';
 
-export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
+export default function SearchBar({ user, ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [results, setResults] = useState<TvShow[]>([]);
-  
+  const [loading, setLoading] = useState(false);
+
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -35,11 +37,14 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
 
   const handleSearch = async (query: string) => {
     try {
+      setLoading(true);
       const response = await fetchResults(query);
-      console.log(response);
       setResults(response);
+      setOpen(true);
     } catch (error) {
       console.error('Search Error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,7 +78,6 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
 
       // Displays the rating immediately in the UI
       setRatings(updatedRatings);
-      setValue('');
       setOpen(false);
 
       // Updates the array with a rating that has an ID from the database
@@ -86,38 +90,41 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+    setOpen(e.target.value.length > 0);
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button role="combobox" variant="outline" aria-expanded={open}>
-          <Search color="gray" strokeWidth={2} />
-          <span className='text-muted-foreground'>What have you been watching?</span>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="p-0" align="end">
-        <Command>
-          <CommandInput
-            placeholder="Search for show..."
-            className="h-9"
-            value={value}
-            onValueChange={setValue}
-          />
-          <CommandList>
-            <CommandEmpty>Show not found.</CommandEmpty>
-            <CommandGroup>
-              {results.map((item: TvShow) => (
-                <CommandItem
-                  key={item.id}
-                  value={`${item.name} (${item.id})`}
-                  onSelect={() => handleSelect(item)}
-                >
-                  {item.name} ({item.first_air_date.slice(0, 4)})
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <div className="relative">
+      <div className="flex gap-2 relative">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="What have you been watching?"
+          className="pl-8"
+          value={value}
+          onChange={handleChange}
+        />
+      </div>
+      {open && value.trim().length > 0 && (
+        <div className="absolute w-full z-50 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md">
+          {loading ? (
+            <div>Searching...</div>
+          ) : results.length > 0 ? (
+            results.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => handleSelect(item)}
+                className="cursor-pointer hover:bg-accent hover:text-accent-foreground p-2 rounded-sm"
+              >
+                {item.name} ({item.first_air_date?.slice(0, 4)})
+              </div>
+            ))
+          ) : (
+            <div className="p-2">Show not found.</div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

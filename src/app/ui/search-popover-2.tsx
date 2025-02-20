@@ -19,11 +19,11 @@ import { Rating, TvShow, TvProps } from '@/app/lib/types';
 import { createRating, fetchResults } from '../lib/actions';
 import { toast } from 'sonner';
 
-export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
+export default function SearchPopover2({ user, ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [results, setResults] = useState<TvShow[]>([]);
-  
+
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -89,12 +89,19 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button role="combobox" variant="outline" aria-expanded={open}>
-          <Search color="gray" strokeWidth={2} />
-          <span className='text-muted-foreground'>What have you been watching?</span>
+        <Button
+          role="combobox"
+          variant="outline"
+          className="p-2.5 w-full justify-start"
+          aria-expanded={open}
+        >
+          <Search className="opacity-50" strokeWidth={2} />
+          <span className="text-muted-foreground">
+            What have you been watching?
+          </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0" align="end">
+      <PopoverContent className="p-0 w-[880px]">
         <Command>
           <CommandInput
             placeholder="Search for show..."

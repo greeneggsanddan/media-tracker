@@ -1,25 +1,14 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
-import SearchPopover from './search-popover';
 import { Rating, TvProps } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
 import { updateRatings } from '../lib/actions';
 import RatingItem from './rating-item';
-import { User } from '@supabase/supabase-js';
 
-function WatchListHeader({ user, ratings, setRatings }: TvProps) {
-  return (
-    <div className="flex justify-between items-end w-full">
-      <h2 className="text-2xl font-semibold tracking-tight">Watchlist</h2>
-      <SearchPopover user={user} ratings={ratings} setRatings={setRatings} />
-    </div>
-  );
-}
-
-export default function RatingLists({ user }: { user: User }) {
-  const [ratings, setRatings] = useState<Rating[]>([]);
+export default function RatingLists({ user, ratings, setRatings }: TvProps) {
   const [draggedItem, setDraggedItem] = useState<Rating | null>(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
   const [initialRating, setInitialRating] = useState<number | null>(null);
@@ -124,7 +113,10 @@ export default function RatingLists({ user }: { user: User }) {
       }));
 
       if (initialRating !== draggedItemRating) {
-        await Promise.all([updateRatings(updatedInitialRatings), updateRatings(updatedFinalRatings)]);
+        await Promise.all([
+          updateRatings(updatedInitialRatings),
+          updateRatings(updatedFinalRatings),
+        ]);
       } else {
         await updateRatings(updatedFinalRatings);
       }
@@ -147,7 +139,7 @@ export default function RatingLists({ user }: { user: User }) {
 
   function sortRatings(array: Rating[]) {
     if (!array || array.length === 0) return [];
-    
+
     return array.sort((a, b) => {
       if (a.user_rating === null && b.user_rating === null) {
         return a.position - b.position;
@@ -176,7 +168,9 @@ export default function RatingLists({ user }: { user: User }) {
                 <Star key={index} fill="black" strokeWidth={0} />
               ))
             ) : (
-                <WatchListHeader user={user} ratings={ratings} setRatings={setRatings} />
+              <h2 className="text-2xl font-semibold tracking-tight -mb-1 mt-4">
+                Watchlist
+              </h2>
             )}
           </div>
           <Separator className="my-2" />
@@ -185,6 +179,7 @@ export default function RatingLists({ user }: { user: User }) {
               (item, index) =>
                 item.user_rating === ratingValue && (
                   <RatingItem
+                    key={item.item_id}
                     item={item}
                     index={index}
                     ratingValue={ratingValue}
