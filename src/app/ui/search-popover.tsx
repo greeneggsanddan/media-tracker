@@ -97,7 +97,6 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
       const itemsInWatchlist = updatedRatings.filter(
         (i) => i.user_rating === null
       ).length;
-      console.log(item);
       const newRating = convertToRating(item, itemsInWatchlist);
       updatedRatings.splice(itemsInWatchlist, 0, newRating);
 
@@ -111,7 +110,7 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
       const ratingWithId = await createRating(newRating);
       const finalRatings = [...updatedRatings];
       finalRatings.splice(itemsInWatchlist, 1, ratingWithId);
-      setRatings(updatedRatings);
+      setRatings(finalRatings);
     } catch (error) {
       console.error('Error creating rating:', error);
     }
@@ -132,7 +131,7 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
           </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-[880px]">
+      <PopoverContent className="p-0 w-[864px]">
         <Command shouldFilter={false}>
           <CommandInput
             placeholder="Search for a show..."
