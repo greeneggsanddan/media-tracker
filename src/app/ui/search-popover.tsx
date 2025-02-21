@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,17 +15,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { Rating, TvShow, TvProps } from '@/app/lib/types';
 import { createRating, fetchResults, fetchTrendingShows } from '../lib/actions';
 import { toast } from 'sonner';
 import { Item } from '@radix-ui/react-dropdown-menu';
+import { CommandLoading } from 'cmdk';
 
 export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [results, setResults] = useState<TvShow[]>([]);
   const [trending, setTrending] = useState<TvShow[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Fetch trending tv shows
   useEffect(() => {
@@ -56,10 +59,17 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
 
   const handleSearch = async (query: string) => {
     try {
+      setLoading(true);
       const response = await fetchResults(query);
-      setResults(response);
+      if (response.length > 0) {
+        setResults(response);
+      } else {
+        // Set something to display when results are empty
+      }
     } catch (error) {
       console.error('Search Error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,6 +104,7 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
       // Displays the rating immediately in the UI
       setRatings(updatedRatings);
       setValue('');
+      setResults([]);
       setOpen(false);
 
       // Updates the array with a rating that has an ID from the database
@@ -105,8 +116,6 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
       console.error('Error creating rating:', error);
     }
   };
-
-  const commandItems = results ? results : trending;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Dialog,
   DialogContent,
@@ -26,7 +27,7 @@ export default function RatingItem({
   setInitialRating,
   setDraggedItemRating,
   ratings,
-  setRatings
+  setRatings,
 }) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -35,8 +36,6 @@ export default function RatingItem({
     setDraggedItemIndex(index);
     setInitialRating(item.user_rating);
     setDraggedItemRating(item.user_rating);
-    console.log('draggedItem:', item);
-    console.log('draggedItemIndex:', index);
   };
 
   const handleDelete = async (item: Rating, index: number) => {
@@ -47,10 +46,14 @@ export default function RatingItem({
       setOpen(false);
       await deleteRating(item.id);
 
-      const sameRatings = updatedRatings.filter((rating) => rating.user_rating === ratingValue);
-      const updatedPositions = sameRatings.map((item, index) => ({...item, position: index}));
+      const sameRatings = updatedRatings.filter(
+        (rating) => rating.user_rating === ratingValue
+      );
+      const updatedPositions = sameRatings.map((item, index) => ({
+        ...item,
+        position: index,
+      }));
       await updateRatings(updatedPositions);
-      console.log('Item deleted', item);
     } catch (error) {
       console.error('Error deleting item:', error);
     }
@@ -60,20 +63,22 @@ export default function RatingItem({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <div
-          className={`h-[210px] w-[140px] relative transition-transform drop-shadow ${
-            draggedItemIndex === index ? 'opacity-50 scale-105' : ''
+          className={`h-[216px] w-[144px] p-1 transition-transform drop-shadow ${
+            draggedItemIndex === index ? 'opacity-50' : ''
           }`}
           draggable
           onDragStart={() => handleDragStart(item, index)}
           onDragOver={(e) => handleDragOver(e, ratingValue, item, index)}
         >
-          <Image
-            src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
-            alt="lorem ipsum"
-            fill
-            className="rounded-md object-cover"
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
+          <div className='relative w-full h-full'>
+            <Image
+              src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
+              alt={item.name}
+              fill
+              className="object-cover rounded-md"
+            />
+            <div className="absolute inset-0 bg-black rounded-md bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
+          </div>
         </div>
       </DialogTrigger>
       <DialogContent>
@@ -82,7 +87,12 @@ export default function RatingItem({
           <DialogDescription>Lorem Ipsum</DialogDescription>
         </DialogHeader>
         <div className="grid gap-2 py-2">
-          <Button variant="destructive" onClick={() => handleDelete(item, index)}>Delete</Button>
+          <Button
+            variant="destructive"
+            onClick={() => handleDelete(item, index)}
+          >
+            Delete
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

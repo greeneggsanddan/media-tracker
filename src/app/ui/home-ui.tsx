@@ -13,7 +13,7 @@ export default function HomeUI({ user }: { user: User }) {
 
   return (
     <div>
-      <div className="mx-auto max-w-[946px] border-x border-zinc min-h-screen">
+      <div className="mx-auto max-w-[930px] border-x border-zinc min-h-screen">
         <div className="container mx-auto p-8">
           <div className="flex justify-between w-full">
             <h1 className="text-3xl font-bold tracking-tight mb-4">
@@ -22,7 +22,6 @@ export default function HomeUI({ user }: { user: User }) {
               <LogOutButton user={user} />
           </div>
           <SearchPopover user={user} ratings={ratings}  setRatings={setRatings} />
-          {/* <SearchBar user={user} ratings={ratings} setRatings={setRatings} /> */}
           <RatingLists user={user} ratings={ratings} setRatings={setRatings} />
         </div>
       </div>
