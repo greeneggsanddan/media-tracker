@@ -15,12 +15,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Search, Loader2 } from 'lucide-react';
-import { Rating, TvShow, TvProps } from '@/app/lib/types';
+import { Search } from 'lucide-react';
+import { TvShow, TvProps } from '@/app/lib/types';
 import { createRating, fetchResults, fetchTrendingShows } from '../lib/actions';
 import { toast } from 'sonner';
-import { Item } from '@radix-ui/react-dropdown-menu';
-import { CommandLoading } from 'cmdk';
 
 export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
   const [open, setOpen] = useState(false);

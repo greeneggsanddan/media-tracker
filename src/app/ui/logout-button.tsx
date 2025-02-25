@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { User } from "@supabase/supabase-js";
 import { logout } from "../login/actions";
 
-export default function LogOutButton({ user }: { user: User }) {
+export default function LogOutButton() {
   return (
     <Button variant="secondary" onClick={logout}>
       Log out

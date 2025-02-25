@@ -2,20 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Search, Plus } from 'lucide-react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
+import { Search } from 'lucide-react';
 import { TvShow, TvProps } from '../lib/types';
 import { createRating, fetchResults } from '../lib/actions';
 import { toast } from 'sonner';
