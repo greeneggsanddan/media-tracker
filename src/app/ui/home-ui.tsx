@@ -16,8 +16,8 @@ export default function HomeUI({ user }: { user: User }) {
         <h1 className="text-3xl font-bold tracking-tight">Media Tracker</h1>
         <LogOutButton />
       </header>
-      <div className="mx-auto w-[930px] border-x min-h-screen">
-        <div className="px-8 py-4">
+      <div className="mx-auto md:max-w-[930px] md:border-x min-h-screen">
+        <div className="px-4 md:px-8 py-4">
           <SearchPopover
             user={user}
             ratings={ratings}

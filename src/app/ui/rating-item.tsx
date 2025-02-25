@@ -15,7 +15,13 @@ import Image from 'next/image';
 import { Rating } from '../lib/types';
 import { updateRatings, deleteRating } from '../lib/actions';
 import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function RatingItem({
   item,
@@ -61,17 +67,19 @@ export default function RatingItem({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <div
-          className={`h-[216px] w-[144px] p-1 transition-transform drop-shadow ${
-            draggedItemIndex === index ? 'opacity-50' : ''
-          }`}
-          draggable
-          onDragStart={() => handleDragStart(item, index)}
-          onDragOver={(e) => handleDragOver(e, ratingValue, item, index)}
-        >
-          <div className='relative w-full h-full'>
+    <div
+      className="w-1/3 md:w-[144px] p-1"
+      draggable
+      onDragStart={() => handleDragStart(item, index)}
+      onDragOver={(e) => handleDragOver(e, ratingValue, item, index)}
+    >
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <div
+            className={`relative w-full aspect-[2/3] drop-shadow ${
+              draggedItemIndex === index ? 'opacity-50' : ''
+            }`}
+          >
             <Image
               src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
               alt={item.title}
@@ -80,34 +88,34 @@ export default function RatingItem({
             />
             <div className="absolute inset-0 bg-black rounded-md bg-opacity-0 hover:bg-opacity-10 transition-opacity" />
           </div>
-        </div>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{item.title}</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-2 py-2">
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder='Rating' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='5'>5</SelectItem>
-              <SelectItem value='4'>4</SelectItem>
-              <SelectItem value='3'>3</SelectItem>
-              <SelectItem value='2'>2</SelectItem>
-              <SelectItem value='1'>1</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="destructive"
-            onClick={() => handleDelete(item, index)}
-          >
-            Delete
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{item.title}</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2 py-2">
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Rating" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="destructive"
+              onClick={() => handleDelete(item, index)}
+            >
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
