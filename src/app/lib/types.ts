@@ -39,6 +39,7 @@ export interface Rating {
   // Basic info
   title: string;
   poster_path?: string;
+  // release_year?: string;
 }
 
 export interface TvProps {

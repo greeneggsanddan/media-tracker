@@ -39,7 +39,6 @@ export async function deleteRating(id: string) {
   try {
     const supabase = await createClient();
     await supabase.from('ratings').delete().eq('id', id);
-    console.log('Rating deleted:', id);
   } catch (error) {
     console.error('Database Error:', error);
   }

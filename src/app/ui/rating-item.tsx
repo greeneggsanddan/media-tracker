@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { Rating } from '../lib/types';
 import { updateRatings, deleteRating } from '../lib/actions';
 import { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function RatingItem({
   item,
@@ -73,7 +74,7 @@ export default function RatingItem({
           <div className='relative w-full h-full'>
             <Image
               src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
-              alt={item.name}
+              alt={item.title}
               fill
               className="object-cover rounded-md"
             />
@@ -83,10 +84,22 @@ export default function RatingItem({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Item name</DialogTitle>
-          <DialogDescription>Lorem Ipsum</DialogDescription>
+          <DialogTitle>{item.title}</DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="grid gap-2 py-2">
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder='Rating' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='5'>5</SelectItem>
+              <SelectItem value='4'>4</SelectItem>
+              <SelectItem value='3'>3</SelectItem>
+              <SelectItem value='2'>2</SelectItem>
+              <SelectItem value='1'>1</SelectItem>
+            </SelectContent>
+          </Select>
           <Button
             variant="destructive"
             onClick={() => handleDelete(item, index)}
