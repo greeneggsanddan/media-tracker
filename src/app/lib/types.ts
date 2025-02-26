@@ -1,4 +1,4 @@
-import { User } from "@supabase/supabase-js";
+import { User } from '@supabase/supabase-js';
 
 export interface Item {
   adult?: boolean;
@@ -23,10 +23,10 @@ export interface Movie extends Item {
 
 export interface TvShow extends Item {
   item_type: 'tv';
-  origin_country?: string[],
-  original_name?: string,
-  first_air_date: string,
-  name: string,
+  origin_country?: string[];
+  original_name?: string;
+  first_air_date: string;
+  name: string;
 }
 
 export interface Rating {
@@ -38,12 +38,21 @@ export interface Rating {
   position: number | null;
   // Basic info
   title: string;
-  poster_path?: string;
-  // release_year?: string;
+  poster_path?: string | null;
+  release_year?: number | null;
 }
 
 export interface TvProps {
   user: User;
   ratings: Rating[];
   setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
+}
+
+export interface HandleDragOverFunction {
+  (
+    e: React.DragEvent<HTMLDivElement>,
+    rating: number | null,
+    targetItem?: Rating,
+    index?: number
+  ): void;
 }

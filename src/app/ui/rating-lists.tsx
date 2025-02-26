@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
-import { Rating, TvProps } from '@/app/lib/types';
+import { Rating, TvProps, HandleDragOverFunction } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
 import { updateRatings } from '../lib/actions';
 import RatingItem from './rating-item';
@@ -39,11 +39,11 @@ export default function RatingLists({ user, ratings, setRatings }: TvProps) {
     };
   }, []);
 
-  const handleDragOver = (
-    e: React.DragEvent<HTMLDivElement>,
-    rating: number | null,
-    targetItem?: Rating,
-    index?: number
+  const handleDragOver: HandleDragOverFunction = (
+    e,
+    rating,
+    targetItem,
+    index
   ) => {
     e.preventDefault();
     e.stopPropagation();
@@ -83,7 +83,6 @@ export default function RatingLists({ user, ratings, setRatings }: TvProps) {
         updatedIndex = 0;
       }
     }
-    console.log('updatedIndex:', updatedIndex);
 
     // Update the dragged item and insert it into its new position
     const updatedItem = { ...draggedItem, user_rating: rating };

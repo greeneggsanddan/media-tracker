@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
-import { Rating } from '../lib/types';
+import { Rating, HandleDragOverFunction } from '../lib/types';
 import { updateRatings, deleteRating } from '../lib/actions';
 import { useState } from 'react';
 import {
@@ -22,6 +22,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
+interface RatingItemProps {
+  item: Rating;
+  index: number;
+  ratingValue: number | null;
+  draggedItemIndex: number | null;
+  handleDragOver: HandleDragOverFunction;
+  setDraggedItem: React.Dispatch<React.SetStateAction<Rating | null>>;
+  setDraggedItemIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  setInitialRating: React.Dispatch<React.SetStateAction<number | null>>;
+  setDraggedItemRating: React.Dispatch<React.SetStateAction<number | null>>;
+  ratings: Rating[];
+  setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
+}
 
 export default function RatingItem({
   item,
@@ -35,7 +49,7 @@ export default function RatingItem({
   setDraggedItemRating,
   ratings,
   setRatings,
-}) {
+}: RatingItemProps) {
   const [open, setOpen] = useState<boolean>(false);
 
   const handleDragStart = (item: Rating, index: number) => {
@@ -91,8 +105,10 @@ export default function RatingItem({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{item.title}</DialogTitle>
-            <DialogDescription></DialogDescription>
+            <DialogTitle>
+              {item.title}
+            </DialogTitle>
+            <DialogDescription>{item.release_year}</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
             <div className="relative w-full aspect-[2/3]">
@@ -132,7 +148,7 @@ export default function RatingItem({
               className="justify-self-start"
               onClick={() => handleDelete(item, index)}
             >
-              Stop tracking
+              Delete
             </Button>
             <Button>Save</Button>
           </div>

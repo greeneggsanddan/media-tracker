@@ -80,7 +80,7 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
       position,
       title: item.name,
       poster_path: item.poster_path,
-      // release_year: item.first_air_date.slice(0, 4),
+      release_year: Number(item.first_air_date.slice(0, 4)),
     };
   }
 
@@ -96,9 +96,7 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
         (i) => i.user_rating === null
       ).length;
       const newRating = convertToRating(item, itemsInWatchlist);
-      console.log(newRating);
       updatedRatings.splice(itemsInWatchlist, 0, newRating);
-      console.log(updatedRatings);
 
       // Displays the rating immediately in the UI
       setRatings(updatedRatings);
