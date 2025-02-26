@@ -174,7 +174,7 @@ export default function RatingLists({ user, ratings, setRatings }: TvProps) {
             )}
           </div>
           <Separator className="my-1" />
-          <div className="flex flex-wrap pb-5">
+          <div className="flex flex-wrap pb-4">
             {ratings.map(
               (item, index) =>
                 item.user_rating === ratingValue && (

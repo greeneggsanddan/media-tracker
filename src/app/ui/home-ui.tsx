@@ -17,7 +17,7 @@ export default function HomeUI({ user }: { user: User }) {
         <LogOutButton />
       </header>
       <div className="mx-auto md:max-w-[930px] md:border-x min-h-screen">
-        <div className="px-4 md:px-8 py-4">
+        <div className="px-2 md:px-8 py-4">
           <SearchPopover
             user={user}
             ratings={ratings}

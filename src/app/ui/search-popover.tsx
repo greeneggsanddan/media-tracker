@@ -132,7 +132,7 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="p-0 w-[calc(100vw-2rem)] md:w-[864px]"
+        className="p-0 w-[calc(100vw-1rem)] md:w-[864px]"
       >
         <Command shouldFilter={false}>
           <CommandInput
