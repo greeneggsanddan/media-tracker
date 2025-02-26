@@ -94,25 +94,47 @@ export default function RatingItem({
             <DialogTitle>{item.title}</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-          <div className="grid gap-2 py-2">
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Rating" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="relative w-full aspect-[2/3]">
+              <Image
+                src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
+                alt={item.title}
+                fill
+                className="object-cover rounded-md"
+              />
+            </div>
+            <div className="flex flex-col w-full h-full justify-between">
+              <div className="grid gap-2">
+                <Label htmlFor="rating">Rating</Label>
+                <Select>
+                  <SelectTrigger id="rating" aria-label="Rating">
+                    <SelectValue
+                      placeholder={
+                        item.user_rating ? item.user_rating : 'No rating'
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="null">No rating</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="1">1</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <div className="w-full flex justify-between">
             <Button
               variant="destructive"
+              className="justify-self-start"
               onClick={() => handleDelete(item, index)}
             >
-              Delete
+              Stop tracking
             </Button>
+            <Button>Save</Button>
           </div>
         </DialogContent>
       </Dialog>
