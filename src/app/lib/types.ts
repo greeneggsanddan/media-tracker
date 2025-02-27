@@ -12,18 +12,18 @@ export interface Item {
 }
 
 export interface Movie extends Item {
-  item_type: 'movie';
+  item_type?: 'movie';
   original_title?: string;
-  release_date: string;
+  release_date?: string;
   title: string;
   video?: boolean;
 }
 
 export interface TvShow extends Item {
-  item_type: 'tv';
+  item_type?: 'tv';
   origin_country?: string[];
   original_name?: string;
-  first_air_date: string;
+  first_air_date?: string;
   name: string;
 }
 

@@ -2,12 +2,16 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import { Rating } from './types';
+import { Rating, Movie, TvShow } from './types';
 
 export async function fetchRatings(id: string, mediaType: string) {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('ratings').select().eq('user_id', id).eq('item_type', mediaType);
+    const { data, error } = await supabase
+      .from('ratings')
+      .select()
+      .eq('user_id', id)
+      .eq('item_type', mediaType);
 
     if (error) {
       redirect('/error');
@@ -34,7 +38,10 @@ export async function fetchTrending(mediaType: string) {
     );
     const result = await response.json();
 
-    return processedResults(result.results.slice(0, 5), mediaType) as Partial<Rating>[];
+    return processedResults(
+      result.results.slice(0, 5),
+      mediaType
+    ) as Partial<Rating>[];
   } catch (error) {
     console.error('Error fetching trending items:', error);
   }
@@ -55,20 +62,27 @@ export async function fetchResults(query: string, mediaType: string) {
     );
     const result = await response.json();
 
-    return processedResults(result.results.slice(0,5), mediaType) as Partial<Rating>[];
+    return processedResults(
+      result.results.slice(0, 5),
+      mediaType
+    ) as Partial<Rating>[];
   } catch (error) {
     console.error('Error fetching search results:', error);
   }
 }
 
-const processedResults = (array: any[], mediaType: string) => {
+const processedResults = (array: (Movie | TvShow)[], mediaType: string) => {
   return array.map((item) => {
     return {
       item_id: item.id,
       item_type: mediaType,
       title: item.title || item.name,
       poster_path: item.poster_path,
-      release_year: Number(item.release_date?.slice(0, 4) || item.first_air_date?.slice(0, 4) || null),
+      release_year: Number(
+        item.release_date?.slice(0, 4) ||
+          item.first_air_date?.slice(0, 4) ||
+          null
+      ),
     };
   });
-}
+};
