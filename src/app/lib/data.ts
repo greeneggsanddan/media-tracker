@@ -78,7 +78,7 @@ const processedResults = (array: (Movie | TvShow)[], mediaType: string) => {
       item_type: mediaType,
       title: mediaType === 'movie' ? (item as Movie).title : (item as TvShow).name,
       poster_path: item.poster_path,
-      release_year: mediaType === movie 
+      release_year: mediaType === 'movie' 
         ? Number((item as Movie).release_date?.slice(0, 4) || null) 
         : Number((item as TvShow).first_air_date?.slice(0, 4) || null),
     };
