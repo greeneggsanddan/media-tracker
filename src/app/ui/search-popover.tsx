@@ -27,33 +27,14 @@ interface SearchPopoverProps {
   ratings: Rating[];
   setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
   mediaType: string;
+  trending: Partial<Rating>[];
 }
 
-export default function SearchPopover({ user, ratings, setRatings, mediaType }: SearchPopoverProps) {
+export default function SearchPopover({ user, ratings, setRatings, mediaType, trending }: SearchPopoverProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [results, setResults] = useState<Partial<Rating>[]>([]);
-  const [trending, setTrending] = useState<Partial<Rating>[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // Fetch trending movies and tv shows
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadTrending() {
-      try {
-        const response = await fetchTrending(mediaType);
-        if (mounted) setTrending(response);
-      } catch (error) {
-        console.error('Error fetching trending items:', error);
-      }
-    }
-
-    loadTrending();
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {

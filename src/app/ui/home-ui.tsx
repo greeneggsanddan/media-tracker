@@ -7,16 +7,17 @@ import LogOutButton from './logout-button';
 import RatingLists from './rating-lists';
 import SearchPopover from './search-popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchRatings } from '../lib/data';
+import { fetchRatings, fetchTrending } from '../lib/data';
 
 export default function HomeUI({ user }: { user: User }) {
-  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [mediaType, setMediaType] = useState<string>('movie');
   const [movieRatings, setMovieRatings] = useState<Rating[]>([]);
   const [tvRatings, setTvRatings] = useState<Rating[]>([]);
-  const [mediaType, setMediaType] = useState<string>('movie');
+  const [trendingMovies, setTrendingMovies] = useState<Partial<Rating>[]>([]);
+  const [trendingTv, setTrendingTv] = useState<Partial<Rating>[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const handleTabChange = (value: string) => setMediaType(value);
-  
+
   // Load data from the database
   useEffect(() => {
     let mounted = true;
@@ -37,6 +38,29 @@ export default function HomeUI({ user }: { user: User }) {
     }
 
     loadData();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Fetch trending movies and tv shows
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadTrending() {
+      try {
+        const movieData = await fetchTrending('movie');
+        const tvData = await fetchTrending('tv');
+        if (mounted) {
+          setTrendingMovies(movieData);
+          setTrendingTv(tvData);
+        }
+      } catch (error) {
+        console.error('Error fetching trending items:', error);
+      }
+    }
+
+    loadTrending();
     return () => {
       mounted = false;
     };
@@ -83,6 +107,7 @@ export default function HomeUI({ user }: { user: User }) {
                 ratings={movieRatings}
                 setRatings={setMovieRatings}
                 mediaType={mediaType}
+                trending={trendingMovies}
               />
               <RatingLists
                 ratings={movieRatings}
@@ -95,11 +120,9 @@ export default function HomeUI({ user }: { user: User }) {
                 ratings={tvRatings}
                 setRatings={setTvRatings}
                 mediaType={mediaType}
+                trending={trendingTv}
               />
-              <RatingLists
-                ratings={tvRatings}
-                setRatings={setTvRatings}
-              />
+              <RatingLists ratings={tvRatings} setRatings={setTvRatings} />
             </TabsContent>
           </Tabs>
         </div>

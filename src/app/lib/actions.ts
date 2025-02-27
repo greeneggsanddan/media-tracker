@@ -1,4 +1,5 @@
 'use server';
+
 import { Rating } from './types';
 import { createClient } from '@/utils/supabase/server';
 
