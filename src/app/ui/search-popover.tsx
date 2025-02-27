@@ -18,7 +18,7 @@ import {
 import { Search } from 'lucide-react';
 import { Rating, TvShow } from '@/app/lib/types';
 import { createRating } from '../lib/actions';
-import { fetchTrending, fetchResults } from '../lib/data';
+import { fetchResults } from '../lib/data';
 import { toast } from 'sonner';
 import { User } from '@supabase/supabase-js';
 
@@ -77,7 +77,10 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType, tr
   const handleSelect = async (item: Partial<Rating>) => {
     // Check for existing duplicates
     if (ratings.some((rating) => rating.item_id === item.item_id)) {
-      toast('Item already exists');
+      toast('You have already added this item.');
+      setValue('');
+      setResults([]);
+      setOpen(false);
       return;
     }
     try {
