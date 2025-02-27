@@ -3,41 +3,24 @@
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
-import { Rating, TvProps, HandleDragOverFunction } from '@/app/lib/types';
+import { Rating, HandleDragOverFunction } from '@/app/lib/types';
 import { fetchRatings } from '@/app/lib/data';
 import { updateRatings } from '../lib/actions';
 import RatingItem from './rating-item';
 
-export default function RatingLists({ user, ratings, setRatings }: TvProps) {
+interface RatingListsProps {
+  ratings: Rating[];
+  setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
+}
+
+export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
   const [draggedItem, setDraggedItem] = useState<Rating | null>(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
   const [initialRating, setInitialRating] = useState<number | null>(null);
   const [draggedItemRating, setDraggedItemRating] = useState<number | null>(
     null
   );
-  const [isLoading, setIsLoading] = useState(true);
   const ratingValues = [null, 5, 4, 3, 2, 1];
-
-  // Load data from the database
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadData() {
-      try {
-        const userRatings = await fetchRatings(user.id);
-        if (mounted) setRatings(sortRatings(userRatings));
-      } catch (error) {
-        console.error('Error loading ratings:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadData();
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleDragOver: HandleDragOverFunction = (
     e,
@@ -135,24 +118,6 @@ export default function RatingLists({ user, ratings, setRatings }: TvProps) {
       console.error('Error updating rating:', error);
     }
   };
-
-  function sortRatings(array: Rating[]) {
-    if (!array || array.length === 0) return [];
-
-    return array.sort((a, b) => {
-      if (a.user_rating === null && b.user_rating === null) {
-        return a.position - b.position;
-      }
-      if (a.user_rating === null) return -1;
-      if (b.user_rating === null) return 1;
-
-      if (a.user_rating !== b.user_rating) {
-        return b.user_rating - a.user_rating;
-      }
-
-      return a.position - b.position;
-    });
-  }
 
   return (
     <div onDrop={handleDrop}>

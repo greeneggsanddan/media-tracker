@@ -80,6 +80,10 @@ export default function RatingItem({
     }
   };
 
+  const handleUpdate = async () => {
+
+  }
+
   return (
     <div
       className="w-1/3 md:w-[144px] p-1"
@@ -111,7 +115,7 @@ export default function RatingItem({
             <DialogDescription>{item.release_year}</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
-            <div className="relative w-full aspect-[2/3]">
+            <div className="relative w-full aspect-[2/3] drop-shadow">
               <Image
                 src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
                 alt={item.title}

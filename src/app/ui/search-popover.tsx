@@ -16,27 +16,36 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Search } from 'lucide-react';
-import { TvShow, TvProps } from '@/app/lib/types';
-import { createRating, fetchResults, fetchTrendingShows } from '../lib/actions';
+import { Rating, TvShow } from '@/app/lib/types';
+import { createRating } from '../lib/actions';
+import { fetchTrending, fetchResults } from '../lib/data';
 import { toast } from 'sonner';
+import { User } from '@supabase/supabase-js';
 
-export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
+interface SearchPopoverProps {
+  user: User;
+  ratings: Rating[];
+  setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
+  mediaType: string;
+}
+
+export default function SearchPopover({ user, ratings, setRatings, mediaType }: SearchPopoverProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
-  const [results, setResults] = useState<TvShow[]>([]);
-  const [trending, setTrending] = useState<TvShow[]>([]);
+  const [results, setResults] = useState<Partial<Rating>[]>([]);
+  const [trending, setTrending] = useState<Partial<Rating>[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch trending tv shows
+  // Fetch trending movies and tv shows
   useEffect(() => {
     let mounted = true;
 
     async function loadTrending() {
       try {
-        const response = await fetchTrendingShows();
+        const response = await fetchTrending(mediaType);
         if (mounted) setTrending(response);
       } catch (error) {
-        console.error('Error fetching trending shows:', error);
+        console.error('Error fetching trending items:', error);
       }
     }
 
@@ -58,7 +67,7 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
   const handleSearch = async (query: string) => {
     try {
       setLoading(true);
-      const response = await fetchResults(query);
+      const response = await fetchResults(query, mediaType);
       if (response.length > 0) {
         setResults(response);
       } else {
@@ -71,22 +80,22 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
     }
   };
 
-  function convertToRating(item: TvShow, position: number) {
+  function convertToRating(item: Partial<Rating>, position: number) {
     return {
       user_id: user.id,
-      item_id: item.id,
-      item_type: 'tv',
+      item_id: item.item_id,
+      item_type: item.item_type,
       user_rating: null,
       position,
-      title: item.name,
+      title: item.title,
       poster_path: item.poster_path,
-      release_year: Number(item.first_air_date.slice(0, 4)),
+      release_year: item.release_year,
     };
   }
 
-  const handleSelect = async (item: TvShow) => {
+  const handleSelect = async (item: Partial<Rating>) => {
     // Check for existing duplicates
-    if (ratings.some((rating) => rating.item_id === item.id)) {
+    if (ratings.some((rating) => rating.item_id === item.item_id)) {
       toast('Item already exists');
       return;
     }
@@ -129,12 +138,10 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
           </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="p-0 w-[calc(100vw-1rem)] md:w-[864px]"
-      >
+      <PopoverContent className="p-0 w-[calc(100vw-1rem)] md:w-[calc(1074px-4rem)]">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Search for a show..."
+            placeholder={`Search for a ${mediaType === 'movie' ? 'movie' : 'tv show'}...`}
             className="h-9"
             value={value}
             onValueChange={setValue}
@@ -143,25 +150,25 @@ export default function SearchPopover({ user, ratings, setRatings }: TvProps) {
             <CommandEmpty>No results found.</CommandEmpty>
             {results.length > 0 ? (
               <CommandGroup heading="Search results">
-                {results.map((item: TvShow) => (
+                {results.map((item: Partial<Rating>) => (
                   <CommandItem
                     key={item.id}
-                    value={`${item.name} (${item.id})`}
+                    value={`${item.title} (${item.id})`}
                     onSelect={() => handleSelect(item)}
                   >
-                    {item.name} ({item.first_air_date.slice(0, 4)})
+                    {item.title} ({item.release_year})
                   </CommandItem>
                 ))}
               </CommandGroup>
             ) : (
               <CommandGroup heading="Trending">
-                {trending.map((item: TvShow) => (
+                {trending.map((item: Partial<Rating>) => (
                   <CommandItem
                     key={item.id}
-                    value={`${item.name} (${item.id})`}
+                    value={`${item.title} (${item.id})`}
                     onSelect={() => handleSelect(item)}
                   >
-                    {item.name} ({item.first_air_date.slice(0, 4)})
+                    {item.title} ({item.release_year})
                   </CommandItem>
                 ))}
               </CommandGroup>

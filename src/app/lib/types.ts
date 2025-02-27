@@ -1,5 +1,3 @@
-import { User } from '@supabase/supabase-js';
-
 export interface Item {
   adult?: boolean;
   backdrop_path?: string;
@@ -40,12 +38,6 @@ export interface Rating {
   title: string;
   poster_path?: string | null;
   release_year?: number | null;
-}
-
-export interface TvProps {
-  user: User;
-  ratings: Rating[];
-  setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
 }
 
 export interface HandleDragOverFunction {
