@@ -15,8 +15,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Search } from 'lucide-react';
-import { Rating, TvShow } from '@/app/lib/types';
+import { Search, LoaderCircle } from 'lucide-react';
+import { Rating } from '@/app/lib/types';
 import { createRating } from '../lib/actions';
 import { fetchResults } from '../lib/data';
 import { toast } from 'sonner';
@@ -30,14 +30,21 @@ interface SearchPopoverProps {
   trending: Partial<Rating>[];
 }
 
-export default function SearchPopover({ user, ratings, setRatings, mediaType, trending }: SearchPopoverProps) {
+export default function SearchPopover({
+  user,
+  ratings,
+  setRatings,
+  mediaType,
+  trending,
+}: SearchPopoverProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
-  const [results, setResults] = useState<Partial<Rating>[]>([]);
+  const [results, setResults] = useState<Partial<Rating>[] | null>([]);
   const [loading, setLoading] = useState(false);
 
   // Debouncing to limit searching to when the user stops typing
   useEffect(() => {
+    setLoading(true);
     const debounce = setTimeout(() => {
       handleSearch(value);
     }, 300);
@@ -47,13 +54,8 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType, tr
 
   const handleSearch = async (query: string) => {
     try {
-      setLoading(true);
       const response = await fetchResults(query, mediaType);
-      if (response.length > 0) {
-        setResults(response);
-      } else {
-        // Set something to display when results are empty
-      }
+      setResults(response);
     } catch (error) {
       console.error('Search Error:', error);
     } finally {
@@ -133,20 +135,34 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType, tr
             onValueChange={setValue}
           />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            {results.length > 0 ? (
-              <CommandGroup heading="Search results">
-                {results.map((item: Partial<Rating>) => (
-                  <CommandItem
-                    key={item.item_id}
-                    value={String(item.item_id)}
-                    onSelect={() => handleSelect(item)}
-                  >
-                    {item.title} ({item.release_year})
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+            {value.length > 0 ? (
+              results.length > 0 ? (
+                <CommandGroup heading="Search results">
+                  {results.map((item: Partial<Rating>) => (
+                    <CommandItem
+                      key={item.item_id}
+                      value={String(item.item_id)}
+                      onSelect={() => handleSelect(item)}
+                    >
+                      {item.title} ({item.release_year})
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              ) : (
+                // No search results
+                <CommandEmpty>
+                  {loading ? (
+                    <LoaderCircle
+                      className="animate-spin justify-self-center"
+                      color="#71717a"
+                    />
+                  ) : (
+                    'No results found.'
+                  )}
+                </CommandEmpty>
+              )
             ) : (
+              // No search query
               <CommandGroup heading="Trending">
                 {trending.map((item: Partial<Rating>) => (
                   <CommandItem
