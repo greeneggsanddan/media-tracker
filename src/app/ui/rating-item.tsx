@@ -118,7 +118,7 @@ export default function RatingItem({
             <div className="relative w-full aspect-[2/3] drop-shadow">
               <Image
                 src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-                alt={item.title}
+                alt={`${item.title} (${item.release_year})`}
                 fill
                 className="object-cover rounded-md"
               />

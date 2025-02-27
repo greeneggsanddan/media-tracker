@@ -125,7 +125,9 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType, tr
       <PopoverContent className="p-0 w-[calc(100vw-1rem)] md:w-[calc(1074px-4rem)]">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder={`Search for a ${mediaType === 'movie' ? 'movie' : 'tv show'}...`}
+            placeholder={`Search for a ${
+              mediaType === 'movie' ? 'movie' : 'tv show'
+            }...`}
             className="h-9"
             value={value}
             onValueChange={setValue}
@@ -137,7 +139,7 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType, tr
                 {results.map((item: Partial<Rating>) => (
                   <CommandItem
                     key={item.item_id}
-                    value={`${item.title} (${item.id})`}
+                    value={String(item.item_id)}
                     onSelect={() => handleSelect(item)}
                   >
                     {item.title} ({item.release_year})
@@ -149,7 +151,7 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType, tr
                 {trending.map((item: Partial<Rating>) => (
                   <CommandItem
                     key={item.item_id}
-                    value={`${item.title} (${item.id})`}
+                    value={String(item.item_id)}
                     onSelect={() => handleSelect(item)}
                   >
                     {item.title} ({item.release_year})
