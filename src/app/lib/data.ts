@@ -76,13 +76,11 @@ const processedResults = (array: (Movie | TvShow)[], mediaType: string) => {
     return {
       item_id: item.id,
       item_type: mediaType,
-      title: item.title || item.name,
+      title: mediaType === movie ? (item as Movie).title || (item as TvShow).name,
       poster_path: item.poster_path,
-      release_year: Number(
-        item.release_date?.slice(0, 4) ||
-          item.first_air_date?.slice(0, 4) ||
-          null
-      ),
+      release_year: mediaType === movie 
+        ? Number((item as Movie).release_date?.slice(0, 4) || null) 
+        : Number((item as TvShow).first_air_date?.slice(0, 4) || null),
     };
   });
 };
