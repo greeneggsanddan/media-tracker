@@ -152,7 +152,7 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType }: 
               <CommandGroup heading="Search results">
                 {results.map((item: Partial<Rating>) => (
                   <CommandItem
-                    key={item.id}
+                    key={item.item_id}
                     value={`${item.title} (${item.id})`}
                     onSelect={() => handleSelect(item)}
                   >
@@ -164,7 +164,7 @@ export default function SearchPopover({ user, ratings, setRatings, mediaType }: 
               <CommandGroup heading="Trending">
                 {trending.map((item: Partial<Rating>) => (
                   <CommandItem
-                    key={item.id}
+                    key={item.item_id}
                     value={`${item.title} (${item.id})`}
                     onSelect={() => handleSelect(item)}
                   >
