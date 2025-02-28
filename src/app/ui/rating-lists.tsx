@@ -30,7 +30,7 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
   ) => {
     e.preventDefault();
     e.stopPropagation();
-
+    
     if (draggedItemIndex === null || draggedItemIndex === index) return;
 
     const updatedItems = [...ratings];
@@ -50,8 +50,8 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
         // Add to end of exisitng rating group
         const lastItem = ratedItems[ratedItems.length - 1];
         updatedIndex =
-          updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
-          1;
+        updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
+        1;
       } else if (rating) {
         // Add to empty rating group
         const itemsRatedHigher = updatedItems.filter(
@@ -66,6 +66,7 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
         updatedIndex = 0;
       }
     }
+    console.log('updatedIndex', updatedIndex);
 
     // Update the dragged item and insert it into its new position
     const updatedItem = { ...draggedItem, user_rating: rating };
@@ -120,24 +121,33 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
   };
 
   const allItems = (array: Rating[]) => {
-    return array.map((item, index) => <RatingItem
-      key={item.item_id}
-      item={item}
-      index={index}
-      draggedItemIndex={draggedItemIndex}
-      handleDragOver={handleDragOver}
-      setDraggedItem={setDraggedItem}
-      setDraggedItemIndex={setDraggedItemIndex}
-      setInitialRating={setInitialRating}
-      setDraggedItemRating={setDraggedItemRating}
-      ratings={ratings}
-      setRatings={setRatings}
-    />
-    )
-  }
+    return array.map((item, index) => (
+      <div className="mb-2">
+        <RatingItem
+          key={item.item_id}
+          item={item}
+          index={index}
+          draggedItemIndex={draggedItemIndex}
+          handleDragOver={handleDragOver}
+          setDraggedItem={setDraggedItem}
+          setDraggedItemIndex={setDraggedItemIndex}
+          setInitialRating={setInitialRating}
+          setDraggedItemRating={setDraggedItemRating}
+          ratings={ratings}
+          setRatings={setRatings}
+        />
+        <div className="flex ms-1">
+          {Array.from({ length: item.user_rating }, (_, index) => (
+            <Star key={index} fill="black" strokeWidth={0} size={18} />
+          ))}
+        </div>
+      </div>
+    ));
+  };
 
   return (
     <div onDrop={handleDrop}>
+      {/* <div className="flex flex-wrap pb-4 mt-2">{allItems(ratings)}</div> */}
       {ratingValues.map((ratingValue) => (
         <div
           key={ratingValue ? ratingValue : 'watchlist'}
@@ -146,7 +156,7 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
           <div className="flex">
             {ratingValue ? (
               Array.from({ length: ratingValue }, (_, index) => (
-                <Star key={index} fill="black" strokeWidth={0} />
+                <Star key={index} fill="black" strokeWidth={0} size={22} />
               ))
             ) : (
               <h2 className="text-2xl font-semibold tracking-tight -mb-1 mt-4">

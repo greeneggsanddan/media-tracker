@@ -51,6 +51,7 @@ export default function RatingItem({
   const [open, setOpen] = useState<boolean>(false);
 
   const handleDragStart = (item: Rating, index: number) => {
+    console.log('drag start', index);
     setDraggedItem(item);
     setDraggedItemIndex(index);
     setInitialRating(item.user_rating);
@@ -85,7 +86,7 @@ export default function RatingItem({
       className="w-1/3 md:w-[144px] p-1"
       draggable
       onDragStart={() => handleDragStart(item, index)}
-      onDragOver={(e) => handleDragOver(e, undefined, item, index)}
+      onDragOver={(e) => handleDragOver(e, item.user_rating, item, index)}
     >
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>

@@ -43,7 +43,7 @@ export interface Rating {
 export interface HandleDragOverFunction {
   (
     e: React.DragEvent<HTMLDivElement>,
-    rating?: number | null,
+    rating: number | null,
     targetItem?: Rating,
     index?: number
   ): void;
