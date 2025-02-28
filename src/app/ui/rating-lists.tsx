@@ -122,7 +122,7 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
 
   const allItems = (array: Rating[]) => {
     return array.map((item, index) => (
-      <div className="mb-2">
+      <div className="mb-2" key={item.item_id}>
         <RatingItem
           key={item.item_id}
           item={item}
