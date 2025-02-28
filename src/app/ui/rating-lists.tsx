@@ -119,6 +119,23 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
     }
   };
 
+  const allItems = (array: Rating[]) => {
+    return array.map((item, index) => <RatingItem
+      key={item.item_id}
+      item={item}
+      index={index}
+      draggedItemIndex={draggedItemIndex}
+      handleDragOver={handleDragOver}
+      setDraggedItem={setDraggedItem}
+      setDraggedItemIndex={setDraggedItemIndex}
+      setInitialRating={setInitialRating}
+      setDraggedItemRating={setDraggedItemRating}
+      ratings={ratings}
+      setRatings={setRatings}
+    />
+    )
+  }
+
   return (
     <div onDrop={handleDrop}>
       {ratingValues.map((ratingValue) => (
@@ -146,7 +163,6 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
                     key={item.item_id}
                     item={item}
                     index={index}
-                    ratingValue={ratingValue}
                     draggedItemIndex={draggedItemIndex}
                     handleDragOver={handleDragOver}
                     setDraggedItem={setDraggedItem}

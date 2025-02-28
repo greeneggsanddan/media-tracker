@@ -26,7 +26,6 @@ import {
 interface RatingItemProps {
   item: Rating;
   index: number;
-  ratingValue: number | null;
   draggedItemIndex: number | null;
   handleDragOver: HandleDragOverFunction;
   setDraggedItem: React.Dispatch<React.SetStateAction<Rating | null>>;
@@ -40,7 +39,6 @@ interface RatingItemProps {
 export default function RatingItem({
   item,
   index,
-  ratingValue,
   draggedItemIndex,
   handleDragOver,
   setDraggedItem,
@@ -68,7 +66,7 @@ export default function RatingItem({
       await deleteRating(item.id);
 
       const sameRatings = updatedRatings.filter(
-        (rating) => rating.user_rating === ratingValue
+        (rating) => rating.user_rating === item.user_rating
       );
       const updatedPositions = sameRatings.map((item, index) => ({
         ...item,
@@ -80,16 +78,14 @@ export default function RatingItem({
     }
   };
 
-  const handleUpdate = async () => {
-
-  }
+  const handleUpdate = async () => {};
 
   return (
     <div
       className="w-1/3 md:w-[144px] p-1"
       draggable
       onDragStart={() => handleDragStart(item, index)}
-      onDragOver={(e) => handleDragOver(e, ratingValue, item, index)}
+      onDragOver={(e) => handleDragOver(e, undefined, item, index)}
     >
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
@@ -109,13 +105,11 @@ export default function RatingItem({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {item.title}
-            </DialogTitle>
+            <DialogTitle>{item.title}</DialogTitle>
             <DialogDescription>{item.release_year}</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
-            <div className="relative w-full aspect-[2/3] drop-shadow">
+            <div className="relative w-full aspect-[2/3] drop-shadow ">
               <Image
                 src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
                 alt={`${item.title} (${item.release_year})`}
@@ -123,7 +117,7 @@ export default function RatingItem({
                 className="object-cover rounded-md"
               />
             </div>
-            <div className="flex flex-col w-full h-full justify-between">
+            <div className="flex flex-col w-full h-full justify-start gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="rating">Rating</Label>
                 <Select>
@@ -141,6 +135,21 @@ export default function RatingItem({
                     <SelectItem value="3">3</SelectItem>
                     <SelectItem value="2">2</SelectItem>
                     <SelectItem value="1">1</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="postion">Position</Label>
+                <Select>
+                  <SelectTrigger id="position" aria-label="Position">
+                    <SelectValue placeholder={item.position + 1} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
