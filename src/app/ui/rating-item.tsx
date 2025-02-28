@@ -29,7 +29,6 @@ interface RatingItemProps {
   ratingValue: number | null;
   draggedItemIndex: number | null;
   handleDragOver: HandleDragOverFunction;
-  handleDrop: () => void;
   setDraggedItem: React.Dispatch<React.SetStateAction<Rating | null>>;
   setDraggedItemIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setInitialRating: React.Dispatch<React.SetStateAction<number | null>>;
@@ -38,18 +37,12 @@ interface RatingItemProps {
   setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
 }
 
-interface TouchPosition {
-  x: number;
-  y: number;
-}
-
 export default function RatingItem({
   item,
   index,
   ratingValue,
   draggedItemIndex,
   handleDragOver,
-  handleDrop,
   setDraggedItem,
   setDraggedItemIndex,
   setInitialRating,
@@ -57,43 +50,7 @@ export default function RatingItem({
   ratings,
   setRatings,
 }: RatingItemProps) {
-  const [open, setOpen] = useState(false);
-  const [touchStart, setTouchStart] = useState<TouchPosition | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    setTouchStart({
-      x: touch.clientX,
-      y: touch.clientY,
-    });
-    setIsDragging(true);
-    handleDragStart(item, index);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-
-    const touch = e.touches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
-
-    if (element) {
-      const ratingElement = element.closest('[data-rating]');
-      if (ratingElement) {
-        const rating =
-          Number(ratingElement.getAttribute('data-rating')) || null;
-        handleDragOver(e as unknown as React.DragEvent<HTMLDivElement>, rating);
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    setTouchStart(null);
-    handleDrop();
-  };
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleDragStart = (item: Rating, index: number) => {
     setDraggedItem(item);
@@ -133,10 +90,6 @@ export default function RatingItem({
       draggable
       onDragStart={() => handleDragStart(item, index)}
       onDragOver={(e) => handleDragOver(e, ratingValue, item, index)}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
     >
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
@@ -156,7 +109,9 @@ export default function RatingItem({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{item.title}</DialogTitle>
+            <DialogTitle>
+              {item.title}
+            </DialogTitle>
             <DialogDescription>{item.release_year}</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4">
