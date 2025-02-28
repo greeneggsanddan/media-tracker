@@ -124,6 +124,7 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
       {ratingValues.map((ratingValue) => (
         <div
           key={ratingValue ? ratingValue : 'watchlist'}
+          data-rating={ratingValue}
           onDragOver={(e) => handleDragOver(e, ratingValue)}
         >
           <div className="flex">
@@ -149,6 +150,7 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
                     ratingValue={ratingValue}
                     draggedItemIndex={draggedItemIndex}
                     handleDragOver={handleDragOver}
+                    handleDrop={handleDrop}
                     setDraggedItem={setDraggedItem}
                     setDraggedItemIndex={setDraggedItemIndex}
                     setInitialRating={setInitialRating}
