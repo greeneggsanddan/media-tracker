@@ -8,6 +8,12 @@ import RatingLists from './rating-lists';
 import SearchPopover from './search-popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetchRatings, fetchTrending } from '../lib/data';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import {
+  AlignStartVertical,
+  LayoutGrid,
+  StretchHorizontal,
+} from 'lucide-react';
 
 export default function HomeUI({ user }: { user: User }) {
   const [mediaType, setMediaType] = useState<string>('movie');
@@ -16,7 +22,9 @@ export default function HomeUI({ user }: { user: User }) {
   const [trendingMovies, setTrendingMovies] = useState<Partial<Rating>[]>([]);
   const [trendingTv, setTrendingTv] = useState<Partial<Rating>[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [view, setView] = useState<string>('tier');
   const handleTabChange = (value: string) => setMediaType(value);
+  const handleViewChange = (value: string) => setView(value);
 
   // Load data from the database
   useEffect(() => {
@@ -97,10 +105,25 @@ export default function HomeUI({ user }: { user: User }) {
             onValueChange={(value) => handleTabChange(value)}
             className="flex flex-col"
           >
-            <TabsList className="self-center">
-              <TabsTrigger value="movie">Movies</TabsTrigger>
-              <TabsTrigger value="tv">TV Shows</TabsTrigger>
-            </TabsList>
+            <div className="flex justify-between">
+              <div className="w-[76px] hidden md:block"></div>
+              <TabsList className="">
+                <TabsTrigger value="movie">Movies</TabsTrigger>
+                <TabsTrigger value="tv">TV Shows</TabsTrigger>
+              </TabsList>
+              <ToggleGroup
+                type="single"
+                defaultValue="tier"
+                onValueChange={(value) => handleViewChange(value)}
+              >
+                <ToggleGroupItem value="tier">
+                  <AlignStartVertical />
+                </ToggleGroupItem>
+                <ToggleGroupItem value="grid">
+                  <LayoutGrid />
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
             <TabsContent value="movie">
               <SearchPopover
                 user={user}
@@ -112,6 +135,7 @@ export default function HomeUI({ user }: { user: User }) {
               <RatingLists
                 ratings={movieRatings}
                 setRatings={setMovieRatings}
+                view={view}
               />
             </TabsContent>
             <TabsContent value="tv">
@@ -122,7 +146,11 @@ export default function HomeUI({ user }: { user: User }) {
                 mediaType={mediaType}
                 trending={trendingTv}
               />
-              <RatingLists ratings={tvRatings} setRatings={setTvRatings} />
+              <RatingLists
+                ratings={tvRatings}
+                setRatings={setTvRatings}
+                view={view}
+              />
             </TabsContent>
           </Tabs>
         </div>

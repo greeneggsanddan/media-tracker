@@ -11,9 +11,14 @@ import RatingItem from './rating-item';
 interface RatingListsProps {
   ratings: Rating[];
   setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
+  view: string;
 }
 
-export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
+export default function RatingLists({
+  ratings,
+  setRatings,
+  view,
+}: RatingListsProps) {
   const [draggedItem, setDraggedItem] = useState<Rating | null>(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
   const [initialRating, setInitialRating] = useState<number | null>(null);
@@ -30,7 +35,7 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (draggedItemIndex === null || draggedItemIndex === index) return;
 
     const updatedItems = [...ratings];
@@ -50,8 +55,8 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
         // Add to end of exisitng rating group
         const lastItem = ratedItems[ratedItems.length - 1];
         updatedIndex =
-        updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
-        1;
+          updatedItems.findIndex((item) => item.item_id === lastItem.item_id) +
+          1;
       } else if (rating) {
         // Add to empty rating group
         const itemsRatedHigher = updatedItems.filter(
@@ -147,46 +152,49 @@ export default function RatingLists({ ratings, setRatings }: RatingListsProps) {
 
   return (
     <div onDrop={handleDrop}>
-      {/* <div className="flex flex-wrap pb-4 mt-2">{allItems(ratings)}</div> */}
-      {ratingValues.map((ratingValue) => (
-        <div
-          key={ratingValue ? ratingValue : 'watchlist'}
-          onDragOver={(e) => handleDragOver(e, ratingValue)}
-        >
-          <div className="flex">
-            {ratingValue ? (
-              Array.from({ length: ratingValue }, (_, index) => (
-                <Star key={index} fill="black" strokeWidth={0} size={22} />
-              ))
-            ) : (
-              <h2 className="text-2xl font-semibold tracking-tight -mb-1 mt-4">
-                Watchlist
-              </h2>
-            )}
+      {view === 'grid' ? (
+        <div className="flex flex-wrap pb-4 mt-4">{allItems(ratings)}</div>
+      ) : (
+        ratingValues.map((ratingValue) => (
+          <div
+            key={ratingValue ? ratingValue : 'watchlist'}
+            onDragOver={(e) => handleDragOver(e, ratingValue)}
+          >
+            <div className="flex">
+              {ratingValue ? (
+                Array.from({ length: ratingValue }, (_, index) => (
+                  <Star key={index} fill="black" strokeWidth={0} size={22} />
+                ))
+              ) : (
+                <h2 className="text-2xl font-semibold tracking-tight -mb-1 mt-4">
+                  Watchlist
+                </h2>
+              )}
+            </div>
+            <Separator className="my-1" />
+            <div className="flex flex-wrap pb-4">
+              {ratings.map(
+                (item, index) =>
+                  item.user_rating === ratingValue && (
+                    <RatingItem
+                      key={item.item_id}
+                      item={item}
+                      index={index}
+                      draggedItemIndex={draggedItemIndex}
+                      handleDragOver={handleDragOver}
+                      setDraggedItem={setDraggedItem}
+                      setDraggedItemIndex={setDraggedItemIndex}
+                      setInitialRating={setInitialRating}
+                      setDraggedItemRating={setDraggedItemRating}
+                      ratings={ratings}
+                      setRatings={setRatings}
+                    />
+                  )
+              )}
+            </div>
           </div>
-          <Separator className="my-1" />
-          <div className="flex flex-wrap pb-4">
-            {ratings.map(
-              (item, index) =>
-                item.user_rating === ratingValue && (
-                  <RatingItem
-                    key={item.item_id}
-                    item={item}
-                    index={index}
-                    draggedItemIndex={draggedItemIndex}
-                    handleDragOver={handleDragOver}
-                    setDraggedItem={setDraggedItem}
-                    setDraggedItemIndex={setDraggedItemIndex}
-                    setInitialRating={setInitialRating}
-                    setDraggedItemRating={setDraggedItemRating}
-                    ratings={ratings}
-                    setRatings={setRatings}
-                  />
-                )
-            )}
-          </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }
