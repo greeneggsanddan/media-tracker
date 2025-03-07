@@ -9,11 +9,8 @@ import SearchPopover from './search-popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetchRatings, fetchTrending } from '../lib/data';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import {
-  AlignStartVertical,
-  LayoutGrid,
-  StretchHorizontal,
-} from 'lucide-react';
+import { AlignStartVertical, LayoutGrid, LoaderCircle } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HomeUI({ user }: { user: User }) {
   const [mediaType, setMediaType] = useState<string>('movie');
@@ -132,11 +129,21 @@ export default function HomeUI({ user }: { user: User }) {
                 mediaType={mediaType}
                 trending={trendingMovies}
               />
-              <RatingLists
-                ratings={movieRatings}
-                setRatings={setMovieRatings}
-                view={view}
-              />
+              {isLoading ? (
+                <div className="grid h-[80px] place-items-center">
+                  <LoaderCircle
+                    className="animate-spin"
+                    color="#71717a"
+                    size={32}
+                  />
+                </div>
+              ) : (
+                <RatingLists
+                  ratings={movieRatings}
+                  setRatings={setMovieRatings}
+                  view={view}
+                />
+              )}
             </TabsContent>
             <TabsContent value="tv">
               <SearchPopover

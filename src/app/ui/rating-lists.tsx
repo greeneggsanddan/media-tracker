@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Star } from 'lucide-react';
 import { Rating, HandleDragOverFunction } from '@/app/lib/types';
-import { fetchRatings } from '@/app/lib/data';
 import { updateRatings } from '../lib/actions';
 import RatingItem from './rating-item';
 
