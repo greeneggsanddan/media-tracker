@@ -28,12 +28,14 @@ interface RatingItemProps {
   index: number;
   draggedItemIndex: number | null;
   handleDragOver: HandleDragOverFunction;
+  isDraggable: boolean;
   setDraggedItem: React.Dispatch<React.SetStateAction<Rating | null>>;
   setDraggedItemIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setInitialRating: React.Dispatch<React.SetStateAction<number | null>>;
   setDraggedItemRating: React.Dispatch<React.SetStateAction<number | null>>;
   ratings: Rating[];
   setRatings: React.Dispatch<React.SetStateAction<Rating[]>>;
+  padding: number;
 }
 
 export default function RatingItem({
@@ -41,17 +43,18 @@ export default function RatingItem({
   index,
   draggedItemIndex,
   handleDragOver,
+  isDraggable,
   setDraggedItem,
   setDraggedItemIndex,
   setInitialRating,
   setDraggedItemRating,
   ratings,
   setRatings,
+  padding
 }: RatingItemProps) {
   const [open, setOpen] = useState<boolean>(false);
 
   const handleDragStart = (item: Rating, index: number) => {
-    console.log('drag start', index);
     setDraggedItem(item);
     setDraggedItemIndex(index);
     setInitialRating(item.user_rating);
@@ -83,10 +86,10 @@ export default function RatingItem({
 
   return (
     <div
-      className="w-1/3 md:w-[144px] p-1"
-      draggable
-      onDragStart={() => handleDragStart(item, index)}
-      onDragOver={(e) => handleDragOver(e, item.user_rating, item, index)}
+      className={`w-1/3 md:w-[144px] p-${padding}`}
+      draggable={isDraggable}
+      onDragStart={isDraggable ? () => handleDragStart(item, index) : undefined}
+      onDragOver={isDraggable ? (e) => handleDragOver(e, item.user_rating, item, index) : undefined}
     >
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>

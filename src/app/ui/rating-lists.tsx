@@ -71,7 +71,6 @@ export default function RatingLists({
         updatedIndex = 0;
       }
     }
-    console.log('updatedIndex', updatedIndex);
 
     // Update the dragged item and insert it into its new position
     const updatedItem = { ...draggedItem, user_rating: rating };
@@ -134,16 +133,18 @@ export default function RatingLists({
           index={index}
           draggedItemIndex={draggedItemIndex}
           handleDragOver={handleDragOver}
+          isDraggable={false}
           setDraggedItem={setDraggedItem}
           setDraggedItemIndex={setDraggedItemIndex}
           setInitialRating={setInitialRating}
           setDraggedItemRating={setDraggedItemRating}
           ratings={ratings}
           setRatings={setRatings}
+          padding={1}
         />
         <div className="flex ms-1">
           {Array.from({ length: item.user_rating }, (_, index) => (
-            <Star key={index} fill="black" strokeWidth={0} size={18} />
+            <Star key={index} fill="black" strokeWidth={0} size={16} />
           ))}
         </div>
       </div>
@@ -163,7 +164,7 @@ export default function RatingLists({
             <div className="flex">
               {ratingValue ? (
                 Array.from({ length: ratingValue }, (_, index) => (
-                  <Star key={index} fill="black" strokeWidth={0} size={22} />
+                  <Star key={index} fill="black" strokeWidth={0} size={20} />
                 ))
               ) : (
                 <h2 className="text-2xl font-semibold tracking-tight -mb-1 mt-4">
@@ -182,12 +183,14 @@ export default function RatingLists({
                       index={index}
                       draggedItemIndex={draggedItemIndex}
                       handleDragOver={handleDragOver}
+                      isDraggable={true}
                       setDraggedItem={setDraggedItem}
                       setDraggedItemIndex={setDraggedItemIndex}
                       setInitialRating={setInitialRating}
                       setDraggedItemRating={setDraggedItemRating}
                       ratings={ratings}
                       setRatings={setRatings}
+                      padding={1}
                     />
                   )
               )}
@@ -198,3 +201,5 @@ export default function RatingLists({
     </div>
   );
 }
+
+
