@@ -50,7 +50,7 @@ export default function RatingItem({
   setDraggedItemRating,
   ratings,
   setRatings,
-  padding
+  padding,
 }: RatingItemProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -84,12 +84,19 @@ export default function RatingItem({
 
   const handleUpdate = async () => {};
 
+  const sameRatingsCount = (ratingValue) =>
+    ratings.filter((rating) => rating.user_rating === ratingValue).length;
+
   return (
     <div
       className={`w-1/3 md:w-[144px] p-${padding}`}
       draggable={isDraggable}
       onDragStart={isDraggable ? () => handleDragStart(item, index) : undefined}
-      onDragOver={isDraggable ? (e) => handleDragOver(e, item.user_rating, item, index) : undefined}
+      onDragOver={
+        isDraggable
+          ? (e) => handleDragOver(e, item.user_rating, item, index)
+          : undefined
+      }
     >
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
@@ -124,16 +131,16 @@ export default function RatingItem({
             <div className="flex flex-col w-full h-full justify-start gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="rating">Rating</Label>
-                <Select>
+                <Select
+                  defaultValue={
+                    item.user_rating ? String(item.user_rating) : 'no_rating'
+                  }
+                >
                   <SelectTrigger id="rating" aria-label="Rating">
-                    <SelectValue
-                      placeholder={
-                        item.user_rating ? item.user_rating : 'No rating'
-                      }
-                    />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="null">No rating</SelectItem>
+                    <SelectItem value="no_rating">No rating</SelectItem>
                     <SelectItem value="5">5</SelectItem>
                     <SelectItem value="4">4</SelectItem>
                     <SelectItem value="3">3</SelectItem>
@@ -144,16 +151,19 @@ export default function RatingItem({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="postion">Position</Label>
-                <Select>
+                <Select defaultValue={String(item.position + 1)}>
                   <SelectTrigger id="position" aria-label="Position">
                     <SelectValue placeholder={item.position + 1} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5</SelectItem>
+                    {Array.from(
+                      { length: sameRatingsCount(item.user_rating) },
+                      (_, index) => (
+                        <SelectItem key={index} value={String(index + 1)}>
+                          {index + 1}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
               </div>
