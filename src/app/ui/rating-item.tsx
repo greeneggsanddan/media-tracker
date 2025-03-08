@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { Rating, HandleDragOverFunction } from '../lib/types';
-import { updateRatings, deleteRating } from '../lib/actions';
+import { updateRating, updateRatings, deleteRating } from '../lib/actions';
 import { useState } from 'react';
 import {
   Select,
@@ -22,6 +22,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface RatingItemProps {
   item: Rating;
@@ -53,6 +65,10 @@ export default function RatingItem({
   padding,
 }: RatingItemProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const [itemRating, setItemRating] = useState<string>(
+    item.user_rating ? String(item.user_rating) : 'no_rating'
+  );
+  const [position, setPosition] = useState<string>(String(item.position + 1));
 
   const handleDragStart = (item: Rating, index: number) => {
     setDraggedItem(item);
@@ -82,7 +98,67 @@ export default function RatingItem({
     }
   };
 
-  const handleUpdate = async () => {};
+  // Add item to the end of a new rating group
+  const handleSave = async () => {
+    try {
+      const itemRatingValue =
+        itemRating === 'no_rating' ? null : Number(itemRating);
+      if (itemRatingValue === item.user_rating) return;
+
+      const updatedItems = [...ratings];
+      const sameRatings = ratings.filter(
+        (i) => i.user_rating === itemRatingValue
+      );
+      let updatedIndex: number;
+
+      updatedItems.splice(index, 1);
+
+      // Find the new index of the saved item
+      if (sameRatings.length > 0) {
+        // Add to end of existing rating group
+        const lastItem = sameRatings[sameRatings.length - 1];
+        updatedIndex =
+          updatedItems.findIndex((i) => i.item_id === lastItem.item_id) + 1;
+      } else if (itemRatingValue) {
+        // Add to empty rating group
+        const itemsRatedHigher = updatedItems.filter(
+          (i) => i.user_rating > itemRatingValue
+        ).length;
+        const itemsInQueue = updatedItems.filter(
+          (i) => i.user_rating === null
+        ).length;
+        updatedIndex = itemsRatedHigher + itemsInQueue;
+      } else {
+        // Add to an empty watchlist
+        updatedIndex = 0;
+      }
+
+      const updatedItem = {
+        ...item,
+        user_rating: itemRatingValue,
+        position: sameRatings.length,
+      };
+      updatedItems.splice(updatedIndex, 0, updatedItem);
+
+      // Updates the positions of the items in the initial rating group
+      const initialRatings = ratings.filter(
+        (i) => i.user_rating === item.user_rating
+      );
+      const updatedInitialRatings = initialRatings.map((item, index) => ({
+        ...item,
+        position: index,
+      }));
+
+      setRatings(updatedItems);
+      setOpen(false);
+      await Promise.all([
+        updateRatings(updatedInitialRatings),
+        updateRating(updatedItem),
+      ]);
+    } catch (error) {
+      console.error('Error saving item:', error);
+    }
+  };
 
   const sameRatingsCount = (ratingValue) =>
     ratings.filter((rating) => rating.user_rating === ratingValue).length;
@@ -131,11 +207,7 @@ export default function RatingItem({
             <div className="flex flex-col w-full h-full justify-start gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="rating">Rating</Label>
-                <Select
-                  defaultValue={
-                    item.user_rating ? String(item.user_rating) : 'no_rating'
-                  }
-                >
+                <Select value={itemRating} onValueChange={setItemRating}>
                   <SelectTrigger id="rating" aria-label="Rating">
                     <SelectValue />
                   </SelectTrigger>
@@ -149,24 +221,24 @@ export default function RatingItem({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <Label htmlFor="postion">Position</Label>
-                <Select defaultValue={String(item.position + 1)}>
+                <Select value={position} onValueChange={setPosition}>
                   <SelectTrigger id="position" aria-label="Position">
                     <SelectValue placeholder={item.position + 1} />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from(
                       { length: sameRatingsCount(item.user_rating) },
-                      (_, index) => (
-                        <SelectItem key={index} value={String(index + 1)}>
-                          {index + 1}
+                      (_, i) => (
+                        <SelectItem key={i} value={String(i + 1)}>
+                          {i + 1}
                         </SelectItem>
                       )
                     )}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="w-full flex justify-between">
@@ -177,7 +249,7 @@ export default function RatingItem({
             >
               Delete
             </Button>
-            <Button>Save</Button>
+            <Button onClick={handleSave}>Save</Button>
           </div>
         </DialogContent>
       </Dialog>

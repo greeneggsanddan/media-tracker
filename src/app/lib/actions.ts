@@ -17,6 +17,19 @@ export async function createRating(rating: Partial<Rating>) {
   }
 }
 
+export async function updateRating(rating: Rating) {
+  try {
+    const supabase = await createClient();
+    const response = await supabase
+      .from('ratings')
+      .update({ user_rating: rating.user_rating, position: rating.position })
+      .eq('id', rating.id);
+    return response.data as Rating;
+  } catch (error) {
+    console.error('Database Error:', error);
+  }
+}
+
 export async function updateRatings(ratings: Rating[]) {
   try {
     const supabase = await createClient();
