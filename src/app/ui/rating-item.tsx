@@ -85,11 +85,12 @@ export default function RatingItem({
     }
   };
 
-  // Add item to the end of a new rating group
+  // Saves the new user rating of an item and adds it to the end of the rating group
   const handleSave = async () => {
     try {
       const itemRatingValue =
         itemRating === 'no_rating' ? null : Number(itemRating);
+      // If the rating value is the same, do nothing
       if (itemRatingValue === item.user_rating) return;
 
       const updatedItems = [...ratings];

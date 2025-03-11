@@ -70,6 +70,7 @@ export default function HomeUI({ user }: { user: User }) {
     };
   }, []);
 
+  // Sort fetched ratings by user rating and then position
   function sortRatings(array: Rating[]) {
     if (!array || array.length === 0) return [];
 
