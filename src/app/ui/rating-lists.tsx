@@ -127,7 +127,6 @@ export default function RatingLists({
     return array.map((item, index) => (
       <div className="w-1/3 md:w-[144px] mb-2" key={item.item_id}>
         <RatingItem
-          key={item.item_id}
           item={item}
           index={index}
           draggedItemIndex={draggedItemIndex}

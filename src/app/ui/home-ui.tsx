@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetchRatings, fetchTrending } from '../lib/data';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { AlignStartVertical, LayoutGrid, LoaderCircle } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HomeUI({ user }: { user: User }) {
   const [mediaType, setMediaType] = useState<string>('movie');
