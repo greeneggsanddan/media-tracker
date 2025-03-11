@@ -9,19 +9,19 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { login, signup } from "@/app/login/actions"
+import { login, loginDemo, signup } from "@/app/login/actions"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your email below to login or create an account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -33,19 +33,19 @@ export function LoginForm({
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="hello@example.com"
                   required
                 />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
+                  {/* <a
                     href="#"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </a> */}
                 </div>
                 <Input id="password" name="password" type="password" required />
               </div>
@@ -56,15 +56,15 @@ export function LoginForm({
                 Sign up
               </Button>
             </div>
-            {/* <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Sign up
+            <div className="mt-4 text-center text-sm">
+              Or try out the demo&nbsp;
+              <a href="#" className="underline underline-offset-4" onClick={loginDemo}>
+                here
               </a>
-            </div> */}
+            </div>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
