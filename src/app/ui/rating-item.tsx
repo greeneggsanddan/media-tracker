@@ -165,7 +165,7 @@ export default function RatingItem({
 
   return (
     <div
-      className={`w-1/3 md:w-[144px] p-${padding}`}
+      className={`p-${padding}`}
       draggable={isDraggable}
       onDragStart={isDraggable ? () => handleDragStart(item, index) : undefined}
       onDragOver={

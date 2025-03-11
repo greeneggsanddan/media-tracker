@@ -125,7 +125,7 @@ export default function RatingLists({
 
   const allItems = (array: Rating[]) => {
     return array.map((item, index) => (
-      <div className="mb-2" key={item.item_id}>
+      <div className="w-1/3 md:w-[144px] mb-2" key={item.item_id}>
         <RatingItem
           key={item.item_id}
           item={item}
@@ -143,7 +143,12 @@ export default function RatingLists({
         />
         <div className="flex ms-1">
           {Array.from({ length: item.user_rating }, (_, index) => (
-            <Star key={index} fill="black" strokeWidth={0} size={16} />
+            <Star
+              key={index}
+              fill="black"
+              strokeWidth={0}
+              className="w-3.5 h-3.5 md:w-4 md:h-4"
+            />
           ))}
         </div>
       </div>
@@ -163,7 +168,7 @@ export default function RatingLists({
             <div className="flex">
               {ratingValue ? (
                 Array.from({ length: ratingValue }, (_, index) => (
-                  <Star key={index} fill="black" strokeWidth={0} size={20} />
+                  <Star key={index} fill="black" strokeWidth={0} className='w-5 h-5' />
                 ))
               ) : (
                 <h2 className="text-2xl font-semibold tracking-tight -mb-1 mt-4">
@@ -176,21 +181,23 @@ export default function RatingLists({
               {ratings.map(
                 (item, index) =>
                   item.user_rating === ratingValue && (
-                    <RatingItem
-                      key={item.item_id}
-                      item={item}
-                      index={index}
-                      draggedItemIndex={draggedItemIndex}
-                      handleDragOver={handleDragOver}
-                      isDraggable={true}
-                      setDraggedItem={setDraggedItem}
-                      setDraggedItemIndex={setDraggedItemIndex}
-                      setInitialRating={setInitialRating}
-                      setDraggedItemRating={setDraggedItemRating}
-                      ratings={ratings}
-                      setRatings={setRatings}
-                      padding={1}
-                    />
+                    <div className='w-1/3 md:w-[144px]'>
+                      <RatingItem
+                        key={item.item_id}
+                        item={item}
+                        index={index}
+                        draggedItemIndex={draggedItemIndex}
+                        handleDragOver={handleDragOver}
+                        isDraggable={true}
+                        setDraggedItem={setDraggedItem}
+                        setDraggedItemIndex={setDraggedItemIndex}
+                        setInitialRating={setInitialRating}
+                        setDraggedItemRating={setDraggedItemRating}
+                        ratings={ratings}
+                        setRatings={setRatings}
+                        padding={1}
+                      />
+                    </div>
                   )
               )}
             </div>
@@ -200,5 +207,3 @@ export default function RatingLists({
     </div>
   );
 }
-
-
