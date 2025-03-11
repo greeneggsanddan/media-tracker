@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { User } from "@supabase/supabase-js";
 import { logout } from "../login/actions";
 
 export default function LogOutButton() {
