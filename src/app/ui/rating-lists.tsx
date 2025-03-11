@@ -167,7 +167,12 @@ export default function RatingLists({
             <div className="flex">
               {ratingValue ? (
                 Array.from({ length: ratingValue }, (_, index) => (
-                  <Star key={index} fill="black" strokeWidth={0} className='w-5 h-5' />
+                  <Star
+                    key={index}
+                    fill="black"
+                    strokeWidth={0}
+                    className="w-5 h-5"
+                  />
                 ))
               ) : (
                 <h2 className="text-2xl font-semibold tracking-tight -mb-1 mt-4">
@@ -180,9 +185,8 @@ export default function RatingLists({
               {ratings.map(
                 (item, index) =>
                   item.user_rating === ratingValue && (
-                    <div className='w-1/3 md:w-[144px]'>
+                    <div className="w-1/3 md:w-[144px]" key={item.item_id}>
                       <RatingItem
-                        key={item.item_id}
                         item={item}
                         index={index}
                         draggedItemIndex={draggedItemIndex}
