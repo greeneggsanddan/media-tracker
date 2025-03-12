@@ -19,7 +19,7 @@ export function LoginForm({
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Media Tracker</CardTitle>
+          <CardTitle className="text-2xl">Drag and Drop Media Tracker</CardTitle>
           <CardDescription>
             Track your favorite movies and TV shows. Drag and drop to rate them.
           </CardDescription>
